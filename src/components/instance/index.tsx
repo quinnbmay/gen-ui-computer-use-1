@@ -40,7 +40,7 @@ export function InstanceFrame() {
         richColors: true,
         closeButton: true,
         duration: 5000,
-      })
+      });
     } finally {
       setIsStopping(false);
     }
@@ -83,7 +83,12 @@ export function InstanceFrame() {
         <div className="absolute top-0 left-0 right-0 h-8 bg-muted/30 backdrop-blur-sm flex items-center px-3 z-10">
           <div className="flex space-x-1.5">
             <div
-              className={cn("w-3 h-3 rounded-full bg-destructive/80", isStopping || isStopped ? "cursor-not-allowed" : "cursor-pointer")}
+              className={cn(
+                "w-3 h-3 rounded-full bg-destructive/80",
+                isStopping || isStopped
+                  ? "cursor-not-allowed"
+                  : "cursor-pointer",
+              )}
               onClick={isStopping || isStopped ? undefined : handleStop}
               role="button"
               aria-label="Stop instance"

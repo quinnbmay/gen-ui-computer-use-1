@@ -178,7 +178,7 @@ export function Thread() {
   const newThread = () => {
     setThreadId(null);
     setStreamUrl(null);
-  }
+  };
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -291,16 +291,19 @@ export function Thread() {
           </div>
         )}
 
-        {
-        /* Create a flex row container when both chatStarted and streamUrl are truthy */}
-        <div className={cn(
-          "flex flex-1 overflow-hidden",
-          chatStarted && streamUrl ? "flex-row" : "flex-col"
-        )}>
-          <StickToBottom className={cn(
-            "relative overflow-hidden",
-            chatStarted && streamUrl ? "flex-1" : "flex-1"
-          )}>
+        {/* Create a flex row container when both chatStarted and streamUrl are truthy */}
+        <div
+          className={cn(
+            "flex flex-1 overflow-hidden",
+            chatStarted && streamUrl ? "flex-row" : "flex-col",
+          )}
+        >
+          <StickToBottom
+            className={cn(
+              "relative overflow-hidden",
+              chatStarted && streamUrl ? "flex-1" : "flex-1",
+            )}
+          >
             <StickyToBottomContent
               className={cn(
                 "absolute inset-0 overflow-y-scroll [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent",
@@ -310,27 +313,27 @@ export function Thread() {
               contentClassName="pt-8 pb-16 max-w-3xl mx-auto flex flex-col gap-4 w-full"
               content={
                 <>
-                    {messages
-                      .filter((m) => !m.id?.startsWith(DO_NOT_RENDER_ID_PREFIX))
-                      .map((message, index) =>
-                        message.type === "human" ? (
-                          <HumanMessage
-                            key={message.id || `${message.type}-${index}`}
-                            message={message}
-                            isLoading={isLoading}
-                          />
-                        ) : (
-                          <AssistantMessage
-                            key={message.id || `${message.type}-${index}`}
-                            message={message}
-                            isLoading={isLoading}
-                            handleRegenerate={handleRegenerate}
-                          />
-                        ),
-                      )}
-                    {isLoading && !firstTokenReceived && (
-                      <AssistantMessageLoading />
+                  {messages
+                    .filter((m) => !m.id?.startsWith(DO_NOT_RENDER_ID_PREFIX))
+                    .map((message, index) =>
+                      message.type === "human" ? (
+                        <HumanMessage
+                          key={message.id || `${message.type}-${index}`}
+                          message={message}
+                          isLoading={isLoading}
+                        />
+                      ) : (
+                        <AssistantMessage
+                          key={message.id || `${message.type}-${index}`}
+                          message={message}
+                          isLoading={isLoading}
+                          handleRegenerate={handleRegenerate}
+                        />
+                      ),
                     )}
+                  {isLoading && !firstTokenReceived && (
+                    <AssistantMessageLoading />
+                  )}
                 </>
               }
               footer={
@@ -403,7 +406,7 @@ export function Thread() {
               }
             />
           </StickToBottom>
-          
+
           {/* Render InstanceFrame inside the flex container when conditions are met */}
           {chatStarted && streamUrl && (
             <div className="flex-1 overflow-hidden">

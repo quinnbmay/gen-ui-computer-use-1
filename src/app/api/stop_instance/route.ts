@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     if (!instanceId) {
       return NextResponse.json(
         { error: "`instanceId` is required." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         {
           error: "Scrapybara API key is missing",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const client = new ScrapybaraClient({
@@ -28,16 +28,13 @@ export async function POST(req: NextRequest) {
     const instance = await client.get(instanceId);
     await instance.stop();
 
-    return NextResponse.json(
-      { success: true },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
     console.error("Failed to process stop instance request:", error);
 
     return NextResponse.json(
       { error: "Failed to stop instance." + error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
