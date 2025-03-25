@@ -749,7 +749,7 @@ __metadata:
 
 "@langchain/langgraph-cua@file:/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua::locator=gen-ui-cua%40workspace%3A.":
   version: 0.0.0-rc.1
-  resolution: "@langchain/langgraph-cua@file:/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua#/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua::hash=f62e74&locator=gen-ui-cua%40workspace%3A."
+  resolution: "@langchain/langgraph-cua@file:/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua#/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua::hash=56ce63&locator=gen-ui-cua%40workspace%3A."
   dependencies:
     scrapybara: ^2.4.2
     zod: ^3.23.8
@@ -757,7 +757,7 @@ __metadata:
     "@langchain/core": ^0.3.43
     "@langchain/langgraph": ^0.2.57
     "@langchain/openai": ">=0.4.9"
-  checksum: 3695efa9aaf5240a9b6fba8a9bde7daeb06d985de00e7829068bc526929658f379783cdb1ab8c910dd4e4516fafb92f1ae5e582662d124369597f037f50d85cb
+  checksum: 2efee0ab16f7526bb27ca101f996542573bb1afd941075970918e609b3ababb601bde5d6541a965f17c18b4c77b2a1341beb8d0b1b44bbf884bad8687d164600
   languageName: node
   linkType: hard
 
@@ -4278,6 +4278,7 @@ __metadata:
     next: ^15.2.4
     next-themes: ^0.4.4
     nuqs: ^2.4.1
+    openai: ^4.87.3
     postcss: ^8.5.3
     prettier: ^3.5.2
     react: ^19.0.0
