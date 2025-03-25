@@ -103,7 +103,7 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
             <span>Wait</span>
           </div>
         );
-      default:
+      default: {
         // Handle PendingSafetyCheck or any other cases
         const pendingCheck =
           action as unknown as ResponseComputerToolCall.PendingSafetyCheck;
@@ -116,6 +116,7 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
           );
         }
         return <span>Unknown action</span>;
+      }
     }
   };
 
