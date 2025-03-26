@@ -1,10 +1,10 @@
 {
-  "name": "gen-ui-cua",
-  "readme": "https://github.com/langchain-ai/gen-ui-cua/blob/main/README.md",
-  "homepage": "https://gen-ui-cua.vercel.app",
+  "name": "gen-ui-computer-use",
+  "readme": "https://github.com/bracesproul/gen-ui-computer-use/blob/main/README.md",
+  "homepage": "https://gen-ui-computer-use.vercel.app",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/langchain-ai/gen-ui-cua.git"
+    "url": "git+https://github.com/bracesproul/gen-ui-computer-use.git"
   },
   "private": true,
   "version": "0.0.0",
@@ -23,7 +23,7 @@
     "@langchain/langgraph": "^0.2.55",
     "@langchain/langgraph-api": "^0.0.16",
     "@langchain/langgraph-cli": "^0.0.16",
-    "@langchain/langgraph-cua": "^0.0.0",
+    "@langchain/langgraph-cua": "^0.0.1",
     "@langchain/langgraph-sdk": "^0.0.57",
     "@langchain/openai": "^0.4.7",
     "@radix-ui/react-avatar": "^1.1.3",

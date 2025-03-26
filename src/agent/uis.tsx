@@ -1,3 +1,4 @@
+import "./styles.css";
 import type { ResponseComputerToolCall } from "openai/resources/responses/responses";
 import {
   ArrowLeftRight,
@@ -26,81 +27,81 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
     switch (action.type) {
       case "click":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Mouse className="w-4 h-4 text-blue-500" />
-            <span>
+            <p>
               Click ({action.button}) at x: {action.x}, y: {action.y}
-            </span>
+            </p>
           </div>
         );
       case "double_click":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Pointer className="w-4 h-4 text-blue-500" />
-            <span>
+            <p>
               Double click at x: {action.x}, y: {action.y}
-            </span>
+            </p>
           </div>
         );
       case "drag":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <MousePointer className="w-4 h-4 text-purple-500" />
-            <span>
+            <p>
               Drag from ({action.path[0]?.x}, {action.path[0]?.y}) to (
               {action.path[action.path.length - 1]?.x},{" "}
               {action.path[action.path.length - 1]?.y})
-            </span>
+            </p>
           </div>
         );
       case "keypress":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <KeyRound className="w-4 h-4 text-green-500" />
-            <span>Keypress: {action.keys.join(" + ")}</span>
+            <p>Keypress: {action.keys.join(" + ")}</p>
           </div>
         );
       case "move":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <MousePointer className="w-4 h-4 text-gray-500" />
-            <span>
+            <p>
               Move to x: {action.x}, y: {action.y}
-            </span>
+            </p>
           </div>
         );
       case "screenshot":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Camera className="w-4 h-4 text-indigo-500" />
-            <span>Take screenshot</span>
+            <p>Take screenshot</p>
           </div>
         );
       case "scroll":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <div className="flex flex-col">
               <ArrowLeftRight className="w-4 h-4 text-amber-500" />
               <ArrowDownUp className="w-4 h-4 text-amber-500" />
             </div>
-            <span>
+            <p>
               Scroll x: {action.scroll_x}, y: {action.scroll_y} at position (
               {action.x}, {action.y})
-            </span>
+            </p>
           </div>
         );
       case "type":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <TypeIcon className="w-4 h-4 text-teal-500" />
-            <span>Type: "{action.text}"</span>
+            <p>Type: "{action.text}"</p>
           </div>
         );
       case "wait":
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Clock className="w-4 h-4 text-gray-400" />
-            <span>Wait</span>
+            <p>Wait</p>
           </div>
         );
       default: {
@@ -109,9 +110,9 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
           action as unknown as ResponseComputerToolCall.PendingSafetyCheck;
         if ("code" in pendingCheck && "message" in pendingCheck) {
           return (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <span className="text-yellow-500">⚠️</span>
-              <span>Safety check: {pendingCheck.message}</span>
+              <p>Safety check: {pendingCheck.message}</p>
             </div>
           );
         }

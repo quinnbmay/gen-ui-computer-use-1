@@ -747,9 +747,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-cua@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "@langchain/langgraph-cua@npm:0.0.0"
+"@langchain/langgraph-cua@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@langchain/langgraph-cua@npm:0.0.1"
   dependencies:
     scrapybara: ^2.4.2
     zod: ^3.23.8
@@ -757,7 +757,7 @@ __metadata:
     "@langchain/core": ^0.3.43
     "@langchain/langgraph": ^0.2.57
     "@langchain/openai": ">=0.4.9"
-  checksum: 9a1bcf0e7de1743dbdd80892d5b73e1b9390cf5a08eab27cd0368e9e334818c8016ce2e4145096c0d7df7710895036640f447d480abbdab36018e39455a8724c
+  checksum: d70f2f571e46943714b72252569e33d0dfa69ec89cb63753c05d7e0b85c439c3cadae92f62b17a46ee6f4237665644673565fd2e9c1f47eddeb48272989c75a5
   languageName: node
   linkType: hard
 
@@ -4243,7 +4243,7 @@ __metadata:
     "@langchain/langgraph": ^0.2.55
     "@langchain/langgraph-api": ^0.0.16
     "@langchain/langgraph-cli": ^0.0.16
-    "@langchain/langgraph-cua": ^0.0.0
+    "@langchain/langgraph-cua": ^0.0.1
     "@langchain/langgraph-sdk": ^0.0.57
     "@langchain/openai": ^0.4.7
     "@radix-ui/react-avatar": ^1.1.3
