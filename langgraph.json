@@ -3,6 +3,9 @@
   "graphs": {
     "agent": "./src/agent/index.ts:graph"
   },
+  "ui": {
+    "agent": "./src/agent/uis.tsx"
+  },
   "env": ".env",
   "dependencies": ["."]
 }

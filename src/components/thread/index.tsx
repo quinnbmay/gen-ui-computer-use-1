@@ -74,13 +74,10 @@ export function Thread() {
     "chatHistoryOpen",
     parseAsBoolean.withDefault(false),
   );
-  const [hideToolCalls, setHideToolCalls] = useQueryState(
-    "hideToolCalls",
-    parseAsBoolean.withDefault(false),
-  );
   const [input, setInput] = useState("");
   const [firstTokenReceived, setFirstTokenReceived] = useState(false);
   const [streamUrl, setStreamUrl] = useQueryState("streamUrl");
+  const [_instanceId, setInstanceId] = useQueryState("instanceId");
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
   const stream = useStreamContext();
@@ -178,6 +175,7 @@ export function Thread() {
   const newThread = () => {
     setThreadId(null);
     setStreamUrl(null);
+    setInstanceId(null);
   };
 
   return (
@@ -310,7 +308,10 @@ export function Thread() {
                 !chatStarted && "flex flex-col items-stretch mt-[25vh]",
                 chatStarted && "grid grid-rows-[1fr_auto]",
               )}
-              contentClassName="pt-8 pb-16 max-w-3xl mx-auto flex flex-col gap-4 w-full"
+              contentClassName={cn(
+                "pt-8 pb-16 max-w-3xl mx-auto flex flex-col gap-4 w-full",
+                chatHistoryOpen && "px-3",
+              )}
               content={
                 <>
                   {messages
@@ -369,22 +370,7 @@ export function Thread() {
                         className="p-3.5 pb-0 border-none bg-transparent field-sizing-content shadow-none ring-0 outline-none focus:outline-none focus:ring-0 resize-none"
                       />
 
-                      <div className="flex items-center justify-between p-2 pt-4">
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <Switch
-                              id="render-tool-calls"
-                              checked={hideToolCalls ?? false}
-                              onCheckedChange={setHideToolCalls}
-                            />
-                            <Label
-                              htmlFor="render-tool-calls"
-                              className="text-sm text-gray-600"
-                            >
-                              Hide Tool Calls
-                            </Label>
-                          </div>
-                        </div>
+                      <div className="flex items-center justify-end p-2 pt-4">
                         {stream.isLoading ? (
                           <Button key="stop" onClick={() => stream.stop()}>
                             <LoaderCircle className="w-4 h-4 animate-spin" />

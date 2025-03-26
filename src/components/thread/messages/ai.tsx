@@ -1,4 +1,3 @@
-import { parsePartialJson } from "@langchain/core/output_parsers";
 import { useStreamContext } from "@/providers/Stream";
 import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
 import { getContentString } from "../utils";
@@ -6,12 +5,23 @@ import { BranchSwitcher, CommandBar } from "./shared";
 import { MarkdownText } from "../markdown-text";
 import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
 import { cn } from "@/lib/utils";
-import { ToolCalls, ToolResult } from "./tool-calls";
-import { MessageContentComplex } from "@langchain/core/messages";
 import { Fragment } from "react/jsx-runtime";
 import { isAgentInboxInterruptSchema } from "@/lib/agent-inbox-interrupt";
 import { ThreadView } from "../agent-inbox";
-import { useQueryState, parseAsBoolean } from "nuqs";
+
+export function hasToolOutputs(message: AIMessage): boolean {
+  const toolOutputs = message.additional_kwargs?.tool_outputs
+    ? message.additional_kwargs?.tool_outputs
+    : message.response_metadata?.output;
+
+  if (!toolOutputs || !Array.isArray(toolOutputs) || !toolOutputs?.length) {
+    return false;
+  }
+
+  return toolOutputs.some(
+    (output: Record<string, unknown>) => output.type === "computer_call",
+  );
+}
 
 function CustomComponent({
   message,
@@ -40,30 +50,6 @@ function CustomComponent({
   );
 }
 
-function parseAnthropicStreamedToolCalls(
-  content: MessageContentComplex[],
-): AIMessage["tool_calls"] {
-  const toolCallContents = content.filter((c) => c.type === "tool_use" && c.id);
-
-  return toolCallContents.map((tc) => {
-    const toolCall = tc as Record<string, any>;
-    let json: Record<string, any> = {};
-    if (toolCall?.input) {
-      try {
-        json = parsePartialJson(toolCall.input) ?? {};
-      } catch {
-        // Pass
-      }
-    }
-    return {
-      name: toolCall.name ?? "",
-      id: toolCall.id ?? "",
-      args: json,
-      type: "tool_call",
-    };
-  });
-}
-
 export function AssistantMessage({
   message,
   isLoading,
@@ -74,10 +60,6 @@ export function AssistantMessage({
   handleRegenerate: (parentCheckpoint: Checkpoint | null | undefined) => void;
 }) {
   const contentString = getContentString(message.content);
-  const [hideToolCalls] = useQueryState(
-    "hideToolCalls",
-    parseAsBoolean.withDefault(false),
-  );
 
   const thread = useStreamContext();
   const isLastMessage =
@@ -85,54 +67,25 @@ export function AssistantMessage({
   const meta = thread.getMessagesMetadata(message);
   const interrupt = thread.interrupt;
   const parentCheckpoint = meta?.firstSeenState?.parent_checkpoint;
-  const anthropicStreamedToolCalls = Array.isArray(message.content)
-    ? parseAnthropicStreamedToolCalls(message.content)
-    : undefined;
-
-  const hasToolCalls =
-    "tool_calls" in message &&
-    message.tool_calls &&
-    message.tool_calls.length > 0;
-  const toolCallsHaveContents =
-    hasToolCalls &&
-    message.tool_calls?.some(
-      (tc) => tc.args && Object.keys(tc.args).length > 0,
-    );
-  const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
-  const isToolResult = message.type === "tool";
-
-  if (isToolResult && hideToolCalls) {
-    return null;
-  }
+  const isToolMessage = message.type === "tool";
+  const isToolCallMsg =
+    message.type === "ai" &&
+    (message.tool_calls?.length || hasToolOutputs(message));
 
   return (
     <div className="flex items-start mr-auto gap-2 group">
-      {isToolResult ? (
-        <ToolResult message={message} />
-      ) : (
-        <div className="flex flex-col gap-2">
-          {contentString.length > 0 && (
-            <div className="py-1">
-              <MarkdownText>{contentString}</MarkdownText>
-            </div>
-          )}
+      <div className="flex flex-col gap-2">
+        {contentString.length > 0 && !isToolMessage && (
+          <div className="py-1">
+            <MarkdownText>{contentString}</MarkdownText>
+          </div>
+        )}
 
-          {!hideToolCalls && (
-            <>
-              {(hasToolCalls && toolCallsHaveContents && (
-                <ToolCalls toolCalls={message.tool_calls} />
-              )) ||
-                (hasAnthropicToolCalls && (
-                  <ToolCalls toolCalls={anthropicStreamedToolCalls} />
-                )) ||
-                (hasToolCalls && <ToolCalls toolCalls={message.tool_calls} />)}
-            </>
-          )}
-
-          <CustomComponent message={message} thread={thread} />
-          {isAgentInboxInterruptSchema(interrupt?.value) && isLastMessage && (
-            <ThreadView interrupt={interrupt.value} />
-          )}
+        <CustomComponent message={message} thread={thread} />
+        {isAgentInboxInterruptSchema(interrupt?.value) && isLastMessage && (
+          <ThreadView interrupt={interrupt.value} />
+        )}
+        {!isToolCallMsg && !isToolMessage && (
           <div
             className={cn(
               "flex gap-2 items-center mr-auto transition-opacity",
@@ -152,8 +105,8 @@ export function AssistantMessage({
               handleRegenerate={() => handleRegenerate(parentCheckpoint)}
             />
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
