@@ -187,8 +187,20 @@ export function InstanceFrame() {
       typeof window === "undefined" ||
       !instanceId ||
       !stream.messages?.length
-    )
+    ) {
       return;
+    }
+
+    const findAndSetScreenshot = () => {
+      const lastScreenshot = stream.messages.findLast(
+        (m) =>
+          m.type === "tool" &&
+          m.additional_kwargs?.type === "computer_call_output",
+      );
+      if (lastScreenshot) {
+        setScreenshot(lastScreenshot.content as string);
+      }
+    };
 
     const checkStatus = async () => {
       try {
@@ -209,22 +221,21 @@ export function InstanceFrame() {
           setIsStopped(true);
         }
         if (["paused", "terminated"].includes(data.status)) {
-          const lastScreenshot = stream.messages.findLast(
-            (m) =>
-              m.type === "tool" &&
-              m.additional_kwargs?.type === "computer_call_output",
-          );
-          if (lastScreenshot) {
-            setScreenshot(lastScreenshot.content as string);
-          }
+          findAndSetScreenshot();
         }
       } catch (error) {
         console.error("Failed to check instance status:", error);
       }
     };
 
-    checkStatus();
-  }, [instanceId, stream.messages]);
+    if (status === "unknown") {
+      checkStatus();
+    }
+
+    if (["paused", "terminated"].includes(status)) {
+      findAndSetScreenshot();
+    }
+  }, [instanceId, status, stream.messages]);
 
   const handleStop = async () => {
     if (!instanceId) {
@@ -441,23 +452,16 @@ export function InstanceFrame() {
             />
             <div
               className={cn(
-                "absolute inset-0 flex items-center justify-center pt-8 transition-all duration-300 ease-in-out",
+                "absolute inset-0 flex items-center justify-center pt-8 transition-all duration-300 ease-in-out gap-3",
                 isScreenshotHovered
                   ? "bg-black/40 opacity-100"
                   : "bg-black/0 opacity-0",
               )}
             >
-              <button
-                onClick={handleResume}
-                className={cn(
-                  "px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-all duration-300 ease-in-out",
-                  isScreenshotHovered
-                    ? "transform scale-100 opacity-100"
-                    : "transform scale-95 opacity-0",
-                )}
-              >
-                Resume
-              </button>
+              <Button onClick={handleStop} variant="destructive">
+                Terminate
+              </Button>
+              <Button onClick={handleResume}>Resume</Button>
             </div>
           </div>
         </div>
