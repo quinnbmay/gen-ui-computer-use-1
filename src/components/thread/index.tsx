@@ -146,7 +146,7 @@ export function Thread() {
           recursion_limit: 150,
           configurable: {
             timeoutHours: 0.1,
-          }
+          },
         },
         optimisticValues: (prev) => ({
           ...prev,
