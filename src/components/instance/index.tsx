@@ -169,7 +169,7 @@ function WindowManagerButtons({
   );
 }
 
-function BrowserView({
+function InstanceView({
   children,
   handleStop,
   handlePause,
@@ -373,7 +373,7 @@ export function InstanceFrame() {
 
   if (isLoading) {
     return (
-      <BrowserView
+      <InstanceView
         handleStop={handleStop}
         handlePause={handlePause}
         handleExpand={() => {}}
@@ -384,13 +384,13 @@ export function InstanceFrame() {
         <div className="w-[630px] h-[420px] lg:w-[830px] lg:h-[620px] flex items-center justify-center p-4 my-auto">
           <LoaderCircle className="w-8 h-8 animate-spin" />
         </div>
-      </BrowserView>
+      </InstanceView>
     );
   }
 
   if (status === "terminated" && screenshot) {
     return (
-      <BrowserView
+      <InstanceView
         handleStop={handleStop}
         handlePause={handlePause}
         handleExpand={() => {}}
@@ -423,7 +423,7 @@ export function InstanceFrame() {
             </Button>
           </div>
         </div>
-      </BrowserView>
+      </InstanceView>
     );
   }
 
@@ -474,7 +474,7 @@ export function InstanceFrame() {
     };
 
     return (
-      <BrowserView
+      <InstanceView
         handleStop={handleStop}
         handlePause={handlePause}
         handleExpand={() => {}}
@@ -505,13 +505,13 @@ export function InstanceFrame() {
             <Button onClick={handleResume}>Resume</Button>
           </div>
         </div>
-      </BrowserView>
+      </InstanceView>
     );
   }
 
   if (!streamUrl) {
     return (
-      <BrowserView
+      <InstanceView
         handleStop={() => {}}
         handlePause={() => {}}
         handleExpand={() => {}}
@@ -541,12 +541,12 @@ export function InstanceFrame() {
         <p className="text-muted-foreground text-sm font-medium">
           Instance not running
         </p>
-      </BrowserView>
+      </InstanceView>
     );
   }
 
   return (
-    <BrowserView
+    <InstanceView
       handleStop={handleStop}
       handlePause={handlePause}
       handleExpand={() => {}}
@@ -561,6 +561,6 @@ export function InstanceFrame() {
         title="Instance Frame"
         allow="clipboard-write"
       />
-    </BrowserView>
+    </InstanceView>
   );
 }
