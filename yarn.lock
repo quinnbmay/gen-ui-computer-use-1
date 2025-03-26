@@ -747,9 +747,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-cua@file:/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua::locator=gen-ui-cua%40workspace%3A.":
-  version: 0.0.0-rc.1
-  resolution: "@langchain/langgraph-cua@file:/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua#/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua::hash=56ce63&locator=gen-ui-cua%40workspace%3A."
+"@langchain/langgraph-cua@npm:^0.0.0":
+  version: 0.0.0
+  resolution: "@langchain/langgraph-cua@npm:0.0.0"
   dependencies:
     scrapybara: ^2.4.2
     zod: ^3.23.8
@@ -757,7 +757,7 @@ __metadata:
     "@langchain/core": ^0.3.43
     "@langchain/langgraph": ^0.2.57
     "@langchain/openai": ">=0.4.9"
-  checksum: 2efee0ab16f7526bb27ca101f996542573bb1afd941075970918e609b3ababb601bde5d6541a965f17c18b4c77b2a1341beb8d0b1b44bbf884bad8687d164600
+  checksum: 9a1bcf0e7de1743dbdd80892d5b73e1b9390cf5a08eab27cd0368e9e334818c8016ce2e4145096c0d7df7710895036640f447d480abbdab36018e39455a8724c
   languageName: node
   linkType: hard
 
@@ -4243,7 +4243,7 @@ __metadata:
     "@langchain/langgraph": ^0.2.55
     "@langchain/langgraph-api": ^0.0.16
     "@langchain/langgraph-cli": ^0.0.16
-    "@langchain/langgraph-cua": "file:/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua"
+    "@langchain/langgraph-cua": ^0.0.0
     "@langchain/langgraph-sdk": ^0.0.57
     "@langchain/openai": ^0.4.7
     "@radix-ui/react-avatar": ^1.1.3
