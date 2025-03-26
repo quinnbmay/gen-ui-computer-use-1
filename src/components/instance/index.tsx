@@ -141,7 +141,7 @@ function WindowManagerButtons({
           <Minus
             className={cn(
               "absolute text-black w-[10px] h-[10px]",
-              isStopping || isStopped || allDisabled
+              isStopping || isStopped
                 ? "opacity-50"
                 : "opacity-100",
             )}
@@ -150,15 +150,15 @@ function WindowManagerButtons({
       </div>
       <div
         className="w-[14px] h-[14px] rounded-full bg-green-500/80 flex items-center justify-center relative cursor-pointer"
-        onClick={isStopping || isStopped || allDisabled ? undefined : onExpand}
+        onClick={onExpand}
         role="button"
         aria-label="Expand instance"
       >
-        {isHovered && !allDisabled && (
+        {isHovered && (
           <Maximize
             className={cn(
               "absolute text-black w-[10px] h-[10px]",
-              isStopping || isStopped || allDisabled
+              isStopping || isStopped
                 ? "opacity-50"
                 : "opacity-100",
             )}
@@ -177,6 +177,7 @@ function InstanceView({
   isStopped,
   allDisabled,
   handleExpand,
+  isExpanded,
 }: {
   children: ReactNode;
   handleStop: () => void;
@@ -185,10 +186,18 @@ function InstanceView({
   isStopped: boolean;
   allDisabled: boolean;
   handleExpand: () => void;
+  isExpanded?: boolean;
 }) {
   return (
-    <div className="max-w-4xl w-full h-full flex items-center justify-center p-4 my-auto pb-20">
-      <div className="w-full overflow-hidden rounded-lg border border-border shadow-sm bg-card relative">
+    <div className={cn(
+      "w-full h-full flex items-center justify-center my-auto",
+      isExpanded ? "fixed inset-0 z-50 bg-background/95 backdrop-blur-sm p-2" : "max-w-4xl p-4 pb-20"
+    )}>
+      <div className={cn(
+        "w-full overflow-hidden rounded-lg border border-border shadow-sm bg-card relative",
+        isExpanded && "mx-auto transition-all duration-300 ease-in-out",
+        isExpanded && "aspect-[4/3] max-h-[90vh] max-w-[calc(90vh*1.33)]"
+      )}>
         <div className="sticky top-0 left-0 right-0 h-8 bg-muted/30 backdrop-blur-sm flex items-center px-3 z-10">
           <WindowManagerButtons
             onCancel={handleStop}
@@ -218,6 +227,7 @@ export function InstanceFrame() {
   const [screenshot, setScreenshot] = useState<string>();
   const [isScreenshotHovered, setIsScreenshotHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (
@@ -371,15 +381,21 @@ export function InstanceFrame() {
     }
   };
 
+  const handleExpand = () => {
+    console.log("CLICKED")
+    setIsExpanded((e) => !e);
+  };
+
   if (isLoading) {
     return (
       <InstanceView
         handleStop={handleStop}
         handlePause={handlePause}
-        handleExpand={() => {}}
+        handleExpand={handleExpand}
         isStopping={isStopping}
         isStopped={isStopped}
         allDisabled={false}
+        isExpanded={isExpanded}
       >
         <div className="w-[630px] h-[420px] lg:w-[830px] lg:h-[620px] flex items-center justify-center p-4 my-auto">
           <LoaderCircle className="w-8 h-8 animate-spin" />
@@ -393,10 +409,11 @@ export function InstanceFrame() {
       <InstanceView
         handleStop={handleStop}
         handlePause={handlePause}
-        handleExpand={() => {}}
+        handleExpand={handleExpand}
         isStopping={isStopping}
         isStopped={isStopped}
         allDisabled={true}
+        isExpanded={isExpanded}
       >
         <img
           src={screenshot}
@@ -477,10 +494,11 @@ export function InstanceFrame() {
       <InstanceView
         handleStop={handleStop}
         handlePause={handlePause}
-        handleExpand={() => {}}
+        handleExpand={handleExpand}
         isStopping={isStopping}
         isStopped={isStopped}
         allDisabled={true}
+        isExpanded={isExpanded}
       >
         <div
           onMouseEnter={() => setIsScreenshotHovered(true)}
@@ -514,10 +532,11 @@ export function InstanceFrame() {
       <InstanceView
         handleStop={() => {}}
         handlePause={() => {}}
-        handleExpand={() => {}}
+        handleExpand={handleExpand}
         isStopping={isStopping}
         isStopped={isStopped}
         allDisabled={true}
+        isExpanded={isExpanded}
       >
         <div className="p-4 rounded-full bg-muted/30">
           <svg
@@ -549,15 +568,19 @@ export function InstanceFrame() {
     <InstanceView
       handleStop={handleStop}
       handlePause={handlePause}
-      handleExpand={() => {}}
+      handleExpand={handleExpand}
       isStopping={isStopping}
       isStopped={isStopped}
       allDisabled={false}
+      isExpanded={isExpanded}
     >
       {isStopping && <div className="absolute inset-0 bg-black/20 z-10" />}
       <iframe
         src={streamUrl}
-        className="w-full h-full min-h-[400px] md:min-h-[632px]"
+        className={cn(
+          "w-full h-full",
+          isExpanded ? "aspect-[4/3]" : "min-h-[400px] md:min-h-[632px]"
+        )}
         title="Instance Frame"
         allow="clipboard-write"
       />
