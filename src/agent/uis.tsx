@@ -120,8 +120,9 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
   };
 
   return (
-    <div className="flex flex-col gap-2 items-start justify-start max-w-[536px] w-full border rounded-md bg-gray-50">
-      <div className="flex px-3 py-2 border-b-[1px] border-gray-200 w-full">
+    <div className="flex flex-col gap-2 items-start justify-start max-w-[536px] min-w-[500px] w-full border rounded-md bg-gray-50">
+      <div className="flex items-center gap-2 px-3 py-2 border-b-[1px] border-gray-200 w-full">
+        <p className="text-sm font-medium">Computer Action</p>
         <p className="text-xs font-light text-gray-500">{toolCallId}</p>
       </div>
       <div className="w-full px-3 pb-2">{renderActionContent()}</div>
@@ -186,10 +187,10 @@ export function ComputerUseToolOutput(props: ComputerUseToolOutputProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="flex flex-col gap-2 items-start justify-start max-w-[536px] min-w-[476px] w-full p-3 border rounded-md bg-gray-50">
+    <div className="flex flex-col gap-2 items-start justify-start max-w-[536px] min-w-[500px] w-full p-3 border rounded-md bg-gray-50">
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-medium">Computer Output:</p>
+          <p className="text-sm font-medium">Computer Output</p>
           <p className="text-xs font-light text-gray-500">{toolCallId}</p>
         </div>
         <button
