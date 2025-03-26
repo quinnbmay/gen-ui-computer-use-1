@@ -1,5 +1,5 @@
 import { useStreamContext } from "@/providers/Stream";
-import { Checkpoint, Message } from "@langchain/langgraph-sdk";
+import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
 import { getContentString } from "../utils";
 import { BranchSwitcher, CommandBar } from "./shared";
 import { MarkdownText } from "../markdown-text";
@@ -8,6 +8,20 @@ import { cn } from "@/lib/utils";
 import { Fragment } from "react/jsx-runtime";
 import { isAgentInboxInterruptSchema } from "@/lib/agent-inbox-interrupt";
 import { ThreadView } from "../agent-inbox";
+
+export function hasToolOutputs(message: AIMessage): boolean {
+  const toolOutputs = message.additional_kwargs?.tool_outputs
+    ? message.additional_kwargs?.tool_outputs
+    : message.response_metadata?.output;
+
+  if (!toolOutputs || !Array.isArray(toolOutputs) || !toolOutputs?.length) {
+    return false;
+  }
+
+  return toolOutputs.some(
+    (output: Record<string, unknown>) => output.type === "computer_call",
+  );
+}
 
 function CustomComponent({
   message,
@@ -53,11 +67,15 @@ export function AssistantMessage({
   const meta = thread.getMessagesMetadata(message);
   const interrupt = thread.interrupt;
   const parentCheckpoint = meta?.firstSeenState?.parent_checkpoint;
+  const isToolMessage = message.type === "tool";
+  const isToolCallMsg =
+    message.type === "ai" &&
+    (message.tool_calls?.length || hasToolOutputs(message));
 
   return (
     <div className="flex items-start mr-auto gap-2 group">
       <div className="flex flex-col gap-2">
-        {contentString.length > 0 && (
+        {contentString.length > 0 && !isToolMessage && (
           <div className="py-1">
             <MarkdownText>{contentString}</MarkdownText>
           </div>
@@ -67,25 +85,27 @@ export function AssistantMessage({
         {isAgentInboxInterruptSchema(interrupt?.value) && isLastMessage && (
           <ThreadView interrupt={interrupt.value} />
         )}
-        <div
-          className={cn(
-            "flex gap-2 items-center mr-auto transition-opacity",
-            "opacity-0 group-focus-within:opacity-100 group-hover:opacity-100",
-          )}
-        >
-          <BranchSwitcher
-            branch={meta?.branch}
-            branchOptions={meta?.branchOptions}
-            onSelect={(branch) => thread.setBranch(branch)}
-            isLoading={isLoading}
-          />
-          <CommandBar
-            content={contentString}
-            isLoading={isLoading}
-            isAiMessage={true}
-            handleRegenerate={() => handleRegenerate(parentCheckpoint)}
-          />
-        </div>
+        {!isToolCallMsg && !isToolMessage && (
+          <div
+            className={cn(
+              "flex gap-2 items-center mr-auto transition-opacity",
+              "opacity-0 group-focus-within:opacity-100 group-hover:opacity-100",
+            )}
+          >
+            <BranchSwitcher
+              branch={meta?.branch}
+              branchOptions={meta?.branchOptions}
+              onSelect={(branch) => thread.setBranch(branch)}
+              isLoading={isLoading}
+            />
+            <CommandBar
+              content={contentString}
+              isLoading={isLoading}
+              isAiMessage={true}
+              handleRegenerate={() => handleRegenerate(parentCheckpoint)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

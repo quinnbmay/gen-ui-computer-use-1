@@ -1,5 +1,6 @@
 import {
   createCua,
+  CUAAnnotation,
   CUAState,
   CUAUpdate,
   getToolOutputs,
@@ -15,19 +16,43 @@ import {
 } from "@langchain/langgraph-sdk/react-ui";
 
 const GraphAnnotation = Annotation.Root({
+  ...CUAAnnotation.spec,
   ui: Annotation<
     UIMessage[],
     UIMessage | RemoveUIMessage | (UIMessage | RemoveUIMessage)[]
   >({ default: () => [], reducer: uiMessageReducer }),
 });
 
+type GraphState = typeof GraphAnnotation.State & CUAState;
+
 async function beforeNode(
-  state: CUAState,
+  state: GraphState,
   config: LangGraphRunnableConfig,
 ): Promise<CUAUpdate> {
   const ui = typedUi<typeof ComponentMap>(config);
   const lastMessage = state.messages[state.messages.length - 1];
   const toolCalls = getToolOutputs(lastMessage);
+
+  const hasRenderVMButton = state.ui.some(
+    (message) => message.name === "render-vm-button",
+  );
+
+  // Check if there are any UI messages in state. If there are not, we can assume the UI button for rendering the VM is not visible
+  if (!hasRenderVMButton && state.instanceId && state.streamUrl) {
+    ui.push(
+      {
+        name: "render-vm-button",
+        props: {
+          instanceId: state.instanceId,
+          streamUrl: state.streamUrl,
+        },
+      },
+      {
+        message: lastMessage,
+      },
+    );
+  }
+
   if (toolCalls?.length) {
     toolCalls.map((tc) => {
       ui.push(
@@ -49,7 +74,7 @@ async function beforeNode(
 }
 
 async function afterNode(
-  state: CUAState,
+  state: GraphState,
   config: LangGraphRunnableConfig,
 ): Promise<CUAUpdate> {
   const ui = typedUi<typeof ComponentMap>(config);
@@ -73,7 +98,7 @@ async function afterNode(
 }
 
 export const graph = createCua({
-  nodeBeforeAction: beforeNode,
-  nodeAfterAction: afterNode,
+  nodeBeforeAction: (state, config) => beforeNode(state, config),
+  nodeAfterAction: (state, config) => afterNode(state, config),
   stateModifier: GraphAnnotation,
 });

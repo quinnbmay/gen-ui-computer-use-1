@@ -12,8 +12,11 @@ import {
   KeyRound,
   ChevronDown,
   ChevronUp,
+  ComputerIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useQueryState } from "nuqs";
 
 interface ComputerUseToolCallProps {
   toolCallId: string;
@@ -27,7 +30,7 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
     switch (action.type) {
       case "click":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <Mouse className="w-4 h-4 text-blue-500" />
             <p>
               Click ({action.button}) at x: {action.x}, y: {action.y}
@@ -36,7 +39,7 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
         );
       case "double_click":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <Pointer className="w-4 h-4 text-blue-500" />
             <p>
               Double click at x: {action.x}, y: {action.y}
@@ -45,7 +48,7 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
         );
       case "drag":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <MousePointer className="w-4 h-4 text-purple-500" />
             <p>
               Drag from ({action.path[0]?.x}, {action.path[0]?.y}) to (
@@ -56,14 +59,14 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
         );
       case "keypress":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <KeyRound className="w-4 h-4 text-green-500" />
             <p>Keypress: {action.keys.join(" + ")}</p>
           </div>
         );
       case "move":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <MousePointer className="w-4 h-4 text-gray-500" />
             <p>
               Move to x: {action.x}, y: {action.y}
@@ -72,14 +75,14 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
         );
       case "screenshot":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <Camera className="w-4 h-4 text-indigo-500" />
             <p>Take screenshot</p>
           </div>
         );
       case "scroll":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <div className="flex flex-col">
               <ArrowLeftRight className="w-4 h-4 text-amber-500" />
               <ArrowDownUp className="w-4 h-4 text-amber-500" />
@@ -92,14 +95,14 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
         );
       case "type":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <TypeIcon className="w-4 h-4 text-teal-500" />
             <p>Type: "{action.text}"</p>
           </div>
         );
       case "wait":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <Clock className="w-4 h-4 text-gray-400" />
             <p>Wait</p>
           </div>
@@ -110,7 +113,7 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
           action as unknown as ResponseComputerToolCall.PendingSafetyCheck;
         if ("code" in pendingCheck && "message" in pendingCheck) {
           return (
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-start gap-2">
               <span className="text-yellow-500">⚠️</span>
               <p>Safety check: {pendingCheck.message}</p>
             </div>
@@ -122,9 +125,11 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
   };
 
   return (
-    <div className="flex flex-col gap-2 items-start justify-start w-full p-3 border rounded-md bg-gray-50">
-      <p className="text-xs font-light text-gray-500">{toolCallId}</p>
-      <div className="w-full">{renderActionContent()}</div>
+    <div className="flex flex-col gap-2 items-start justify-start w-[536px] border rounded-md bg-gray-50">
+      <div className="flex px-3 py-2 border-b-[1px] border-gray-200 w-full">
+        <p className="text-xs font-light text-gray-500">{toolCallId}</p>
+      </div>
+      <div className="w-full px-3 pb-2">{renderActionContent()}</div>
     </div>
   );
 }
@@ -142,7 +147,7 @@ export function ComputerUseToolOutput(props: ComputerUseToolOutputProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="flex flex-col gap-2 items-start justify-start w-full p-3 border rounded-md bg-gray-50">
+    <div className="flex flex-col gap-2 items-start justify-start w-[536px] p-3 border rounded-md bg-gray-50">
       <div className="flex justify-between items-center w-full">
         <p className="text-xs font-light text-gray-500">{toolCallId}</p>
         <button
@@ -160,11 +165,11 @@ export function ComputerUseToolOutput(props: ComputerUseToolOutputProps) {
         </button>
       </div>
       {isExpanded && (
-        <div className="w-full mt-2 border border-gray-200 rounded overflow-hidden">
+        <div className="w-[512px] mt-2 border border-gray-200 rounded overflow-hidden">
           <img
-            src={`data:image/png;base64,${screenshot}`}
+            src={screenshot}
             alt="Computer screenshot"
-            className="w-full h-auto"
+            className="w-[512px] h-[384px]"
           />
         </div>
       )}
@@ -172,8 +177,37 @@ export function ComputerUseToolOutput(props: ComputerUseToolOutputProps) {
   );
 }
 
+interface RenderVMButtonProps {
+  instanceId: string;
+  streamUrl: string;
+}
+
+function RenderVMButton(props: RenderVMButtonProps) {
+  const { instanceId, streamUrl } = props;
+
+  const onClick = () => {
+    // Create a URL object based on the current URL
+    const url = new URL(window.location.href);
+
+    // Set or update the query parameters
+    url.searchParams.set("instanceId", instanceId);
+    url.searchParams.set("streamUrl", streamUrl);
+
+    // Update the URL without refreshing the page
+    window.history.pushState({}, "", url.toString());
+  };
+
+  return (
+    <Button onClick={onClick}>
+      <ComputerIcon className="w-3 h-3" />
+      <span className="mr-1">Open Virtual Machine View</span>
+    </Button>
+  );
+}
+
 const ComponentMap = {
   "computer-use-tool-output": ComputerUseToolOutput,
   "computer-use-tool-call": ComputerUseToolCall,
+  "render-vm-button": RenderVMButton,
 } as const;
 export default ComponentMap;
