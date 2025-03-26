@@ -403,7 +403,7 @@ export function InstanceFrame() {
           alt="Terminated instance screenshot"
           className="w-full object-contain opacity-70"
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 bg-black/30">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30">
           <div className="bg-card/90 p-6 rounded-lg shadow-lg text-center max-w-xs">
             <h3 className="text-lg font-semibold mb-2">Instance Terminated</h3>
             <p className="text-muted-foreground text-sm mb-4">
@@ -493,7 +493,7 @@ export function InstanceFrame() {
           />
           <div
             className={cn(
-              "absolute inset-0 flex items-center justify-center pt-8 transition-all duration-300 ease-in-out gap-3",
+              "absolute inset-0 flex items-center justify-center transition-all duration-300 ease-in-out gap-3",
               isScreenshotHovered
                 ? "bg-black/40 opacity-100"
                 : "bg-black/0 opacity-0",
@@ -554,10 +554,10 @@ export function InstanceFrame() {
       isStopped={isStopped}
       allDisabled={false}
     >
-      {isStopping && <div className="absolute inset-0 bg-black/20 z-10 pt-8" />}
+      {isStopping && <div className="absolute inset-0 bg-black/20 z-10" />}
       <iframe
         src={streamUrl}
-        className="w-full h-full pt-8"
+        className="w-full h-full min-h-[400px] md:min-h-[632px]"
         title="Instance Frame"
         allow="clipboard-write"
       />
