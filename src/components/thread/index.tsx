@@ -26,8 +26,6 @@ import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 import ThreadHistory from "./history";
 import { toast } from "sonner";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { Label } from "../ui/label";
-import { Switch } from "../ui/switch";
 import { InstanceFrame } from "../instance";
 
 function StickyToBottomContent(props: {
@@ -144,6 +142,12 @@ export function Thread() {
       { messages: [...toolMessages, newHumanMessage] },
       {
         streamMode: ["values"],
+        config: {
+          recursion_limit: 150,
+          configurable: {
+            timeoutHours: 0.1,
+          },
+        },
         optimisticValues: (prev) => ({
           ...prev,
           messages: [

@@ -98,8 +98,8 @@ async function afterNode(
 }
 
 export const graph = createCua({
-  nodeBeforeAction: (state, config) => beforeNode(state, config),
-  nodeAfterAction: (state, config) => afterNode(state, config),
+  nodeBeforeAction: beforeNode,
+  nodeAfterAction: afterNode,
   stateModifier: GraphAnnotation,
   recursionLimit: 150,
   timeoutHours: 0.1,

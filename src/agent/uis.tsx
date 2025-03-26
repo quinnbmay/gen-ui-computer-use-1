@@ -1,3 +1,5 @@
+"use client";
+
 import "./styles.css";
 import type { ResponseComputerToolCall } from "openai/resources/responses/responses";
 import {
