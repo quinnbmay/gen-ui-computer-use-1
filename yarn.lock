@@ -4298,7 +4298,7 @@ __metadata:
     framer-motion: ^12.4.9
     globals: ^15.14.0
     katex: ^0.16.21
-    langgraph-nextjs-api-passthrough: ^0.0.3
+    langgraph-nextjs-api-passthrough: ^0.0.4-rc.0
     lodash: ^4.17.21
     lucide-react: ^0.476.0
     next: ^15.2.4
@@ -5395,12 +5395,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"langgraph-nextjs-api-passthrough@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "langgraph-nextjs-api-passthrough@npm:0.0.3"
+"langgraph-nextjs-api-passthrough@npm:^0.0.4-rc.0":
+  version: 0.0.4-rc.0
+  resolution: "langgraph-nextjs-api-passthrough@npm:0.0.4-rc.0"
   peerDependencies:
     next: "*"
-  checksum: 959131272137b9fa49e5fdf151ff202bd98edd010484bf4cb323c95d620a6789dc8717a918a86e329dc8f5c64d51856db4c6eb5e9ad3ba0cfd2f7ee533bb463d
+  checksum: 9c9c261481539b237a8503668084a223b73465d5ad4ec64bceab9aea0696ec0c8d09fda9601358a4914fca7d792b27733f851da8b4f20e75d6d43659a7eac4b1
   languageName: node
   linkType: hard
 
