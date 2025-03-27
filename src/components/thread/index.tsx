@@ -12,10 +12,7 @@ import { Button } from "../ui/button";
 import { Checkpoint, Message } from "@langchain/langgraph-sdk";
 import { AssistantMessage, AssistantMessageLoading } from "./messages/ai";
 import { HumanMessage } from "./messages/human";
-import {
-  DO_NOT_RENDER_ID_PREFIX,
-  ensureToolCallsHaveResponses,
-} from "@/lib/ensure-tool-responses";
+import { DO_NOT_RENDER_ID_PREFIX } from "@/lib/constants";
 import { LangGraphLogoSVG } from "../icons/langgraph";
 import { TooltipIconButton } from "./tooltip-icon-button";
 import {
@@ -153,9 +150,8 @@ export function Thread() {
       content: input,
     };
 
-    const toolMessages = ensureToolCallsHaveResponses(stream.messages);
     stream.submit(
-      { messages: [...toolMessages, newHumanMessage] },
+      { messages: [newHumanMessage] },
       {
         streamMode: ["values"],
         config: {
@@ -166,11 +162,7 @@ export function Thread() {
         },
         optimisticValues: (prev) => ({
           ...prev,
-          messages: [
-            ...(prev.messages ?? []),
-            ...toolMessages,
-            newHumanMessage,
-          ],
+          messages: [...(prev.messages ?? []), newHumanMessage],
         }),
       },
     );

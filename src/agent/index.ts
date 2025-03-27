@@ -125,5 +125,4 @@ export const graph = createCua({
   stateModifier: GraphAnnotation,
   recursionLimit: 150,
   timeoutHours: 0.1,
-  zdrEnabled: true,
 });
