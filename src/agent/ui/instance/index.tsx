@@ -15,7 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useStreamContext } from "@/providers/Stream";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 function StopInstanceDialog({
   isHovered,

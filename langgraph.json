@@ -4,7 +4,7 @@
     "agent": "./src/agent/index.ts:graph"
   },
   "ui": {
-    "agent": "./src/agent/uis.tsx"
+    "agent": "./src/agent/ui/index.tsx"
   },
   "env": ".env",
   "dependencies": ["."]

@@ -1,3 +1,5 @@
+"use client";
+
 import { v4 as uuidv4 } from "uuid";
 import { ReactNode, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
@@ -26,7 +28,7 @@ import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 import ThreadHistory from "./history";
 import { toast } from "sonner";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { InstanceFrame } from "../instance";
+import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
 
 function StickyToBottomContent(props: {
   content: ReactNode;
@@ -74,8 +76,7 @@ export function Thread() {
   );
   const [input, setInput] = useState("");
   const [firstTokenReceived, setFirstTokenReceived] = useState(false);
-  const [streamUrl, setStreamUrl] = useQueryState("streamUrl");
-  const [_instanceId, setInstanceId] = useQueryState("instanceId");
+  const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState("isShowingInstanceFrame", parseAsBoolean);
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
   const stream = useStreamContext();
@@ -178,9 +179,14 @@ export function Thread() {
 
   const newThread = () => {
     setThreadId(null);
-    setStreamUrl(null);
-    setInstanceId(null);
+    setIsShowingInstanceFrame(null);
   };
+
+  const customInstanceViewComponent = stream.values.ui?.find(
+    (ui) => ui.metadata?._component_type === "instance_view",
+  );
+
+  const isShowingInstance = !!(isShowingInstanceFrame && customInstanceViewComponent);
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -297,13 +303,13 @@ export function Thread() {
         <div
           className={cn(
             "flex flex-1 overflow-hidden",
-            chatStarted && streamUrl ? "flex-row" : "flex-col",
+            chatStarted && isShowingInstance ? "flex-row" : "flex-col",
           )}
         >
           <StickToBottom
             className={cn(
               "relative overflow-hidden",
-              chatStarted && streamUrl ? "flex-1" : "flex-1",
+              chatStarted && isShowingInstance ? "flex-1" : "flex-1",
             )}
           >
             <StickyToBottomContent
@@ -398,9 +404,14 @@ export function Thread() {
           </StickToBottom>
 
           {/* Render InstanceFrame inside the flex container when conditions are met */}
-          {chatStarted && streamUrl && (
+          {chatStarted && isShowingInstance && (
             <div className="flex-1 overflow-hidden">
-              <InstanceFrame />
+              <LoadExternalComponent
+                key={customInstanceViewComponent?.id}
+                stream={stream}
+                message={customInstanceViewComponent}
+                meta={{ ui: customInstanceViewComponent }}
+              />
             </div>
           )}
         </div>
