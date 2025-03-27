@@ -6,7 +6,10 @@ import {
   getToolOutputs,
   isComputerCallToolMessage,
 } from "@langchain/langgraph-cua";
-import { typedUi } from "@langchain/langgraph-sdk/react-ui/server";
+import {
+  typedUi,
+  uiMessageReducer,
+} from "@langchain/langgraph-sdk/react-ui/server";
 import type ComponentMap from "./ui/index";
 import {
   Annotation,
@@ -16,7 +19,6 @@ import {
   StateGraph,
 } from "@langchain/langgraph";
 import {
-  uiMessageReducer,
   type UIMessage,
   type RemoveUIMessage,
 } from "@langchain/langgraph-sdk/react-ui";
@@ -164,7 +166,6 @@ function formatMessages(state: GraphState, config: LangGraphRunnableConfig) {
     return {};
   }
 
-  console.log("\nREMOVING A MESSAGE YOOOOOO\n");
   // There is no matching tool response to the latest tool call. We must remove it from the state
   const removeMsg = new RemoveMessage({ id: lastAiMsgToolCall.id ?? "" });
   return {

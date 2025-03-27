@@ -3,6 +3,7 @@
 import "./styles.css";
 import { Button } from "@/components/ui/button";
 import { ComputerIcon } from "lucide-react";
+import { useQueryState, parseAsBoolean } from "nuqs";
 
 interface RenderVMButtonProps {
   instanceId: string;
@@ -11,17 +12,13 @@ interface RenderVMButtonProps {
 
 export function RenderVMButton(props: RenderVMButtonProps) {
   const { instanceId, streamUrl } = props;
+  const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
+    "isShowingInstanceFrame",
+    parseAsBoolean,
+  );
 
   const onClick = () => {
-    // Create a URL object based on the current URL
-    const url = new URL(window.location.href);
-
-    // Set or update the query parameters
-    url.searchParams.set("instanceId", instanceId);
-    url.searchParams.set("streamUrl", streamUrl);
-
-    // Update the URL without refreshing the page
-    window.history.pushState({}, "", url.toString());
+    setIsShowingInstanceFrame((p) => !p);
   };
 
   return (
@@ -31,7 +28,9 @@ export function RenderVMButton(props: RenderVMButtonProps) {
       className="w-full max-w-[536px]"
     >
       <ComputerIcon className="w-3 h-3" />
-      <span className="mr-1">Open Virtual Machine View</span>
+      <span className="mr-1">
+        {isShowingInstanceFrame ? "Close" : "Open"} Virtual Machine View
+      </span>
     </Button>
   );
 }

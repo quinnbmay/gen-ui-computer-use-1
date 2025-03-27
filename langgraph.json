@@ -6,7 +6,14 @@
   "ui": {
     "agent": "./src/agent/ui/index.tsx"
   },
-  "ui_config": { "shared": ["nuqs", "nuqs/adapters/next/app"] },
+  "ui_config": {
+    "shared": [
+      "nuqs",
+      "nuqs/adapters/next/app",
+      "@/components/ui/sonner",
+      "sonner"
+    ]
+  },
   "env": ".env",
   "dependencies": ["."]
 }

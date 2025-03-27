@@ -1,4 +1,6 @@
 "use client";
+import * as nuqs from "nuqs";
+import * as nuqsAdapters from "nuqs/adapters/next/app";
 
 import { v4 as uuidv4 } from "uuid";
 import { ReactNode, useEffect, useRef } from "react";
@@ -26,9 +28,18 @@ import {
 import { useQueryState, parseAsBoolean } from "nuqs";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 import ThreadHistory from "./history";
-import { toast } from "sonner";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
+import {
+  experimental_loadShare,
+  LoadExternalComponent,
+} from "@langchain/langgraph-sdk/react-ui";
+import * as Toaster from "@/components/ui/sonner";
+import * as sonner from "sonner";
+
+experimental_loadShare("nuqs", nuqs);
+experimental_loadShare("nuqs/adapters/next/app", nuqsAdapters);
+experimental_loadShare("@/components/ui/sonner", Toaster);
+experimental_loadShare("sonner", sonner);
 
 function StickyToBottomContent(props: {
   content: ReactNode;
@@ -69,6 +80,7 @@ function ScrollToBottom(props: { className?: string }) {
 }
 
 export function Thread() {
+  const { toast } = sonner;
   const [threadId, setThreadId] = useQueryState("threadId");
   const [chatHistoryOpen, setChatHistoryOpen] = useQueryState(
     "chatHistoryOpen",
@@ -150,7 +162,6 @@ export function Thread() {
           recursion_limit: 150,
           configurable: {
             timeoutHours: 0.1,
-            zdrEnabled: true,
           },
         },
         optimisticValues: (prev) => ({
@@ -326,7 +337,7 @@ export function Thread() {
               )}
               contentClassName={cn(
                 "pt-8 pb-16 max-w-3xl mx-auto flex flex-col gap-4 w-full",
-                chatHistoryOpen && "px-3",
+                (chatHistoryOpen || isShowingInstance) && "px-5",
               )}
               content={
                 <>
