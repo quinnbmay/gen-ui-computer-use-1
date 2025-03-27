@@ -421,7 +421,12 @@ export function Thread() {
 
           {/* Render InstanceFrame inside the flex container when conditions are met */}
           {chatStarted && customInstanceViewComponent && (
-            <div className={cn("flex-1 overflow-hidden", !isShowingInstance && "hidden")}>
+            <div
+              className={cn(
+                "flex-1 overflow-hidden",
+                !isShowingInstance && "hidden",
+              )}
+            >
               <LoadExternalComponent
                 key={customInstanceViewComponent?.id}
                 stream={stream}
