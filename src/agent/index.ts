@@ -8,12 +8,19 @@ import {
 } from "@langchain/langgraph-cua";
 import { typedUi } from "@langchain/langgraph-sdk/react-ui/server";
 import type ComponentMap from "./ui/index";
-import { Annotation, LangGraphRunnableConfig } from "@langchain/langgraph";
+import {
+  Annotation,
+  END,
+  LangGraphRunnableConfig,
+  START,
+  StateGraph,
+} from "@langchain/langgraph";
 import {
   uiMessageReducer,
   type UIMessage,
   type RemoveUIMessage,
 } from "@langchain/langgraph-sdk/react-ui";
+import { AIMessage, RemoveMessage } from "@langchain/core/messages";
 
 const GraphAnnotation = Annotation.Root({
   ...CUAAnnotation.spec,
@@ -117,10 +124,59 @@ async function afterNode(
   return {};
 }
 
-export const graph = createCua({
+const cua = createCua({
   nodeBeforeAction: beforeNode,
   nodeAfterAction: afterNode,
   stateModifier: GraphAnnotation,
   recursionLimit: 150,
   timeoutHours: 0.1,
+  zdrEnabled: true,
 });
+
+function formatMessages(state: GraphState, config: LangGraphRunnableConfig) {
+  const { messages } = state;
+  // Get the most recent AI message with computer tool calls
+  const lastAiMsgToolCall = messages.findLast((m) => {
+    if (m.getType() !== "ai") {
+      return false;
+    }
+    const toolCalls = getToolOutputs(m);
+    return !!toolCalls?.length;
+  }) as AIMessage | undefined;
+  // Get the tool calls from the last AI message, if exists
+  const toolCalls = lastAiMsgToolCall
+    ? getToolOutputs(lastAiMsgToolCall)
+    : undefined;
+
+  // If there is no last AI message with tool calls, proceed as normal
+  if (!lastAiMsgToolCall || !toolCalls) {
+    return {};
+  }
+
+  // If there are tool calls, look for the matching tool response
+  const lastToolCallId = toolCalls[toolCalls.length - 1].call_id;
+  const matchingToolMessage = messages.find(
+    (m) => isComputerCallToolMessage(m) && m.tool_call_id === lastToolCallId,
+  );
+
+  if (matchingToolMessage) {
+    // There is a matching tool response to the latest tool call. We can proceed as normal
+    return {};
+  }
+
+  console.log("\nREMOVING A MESSAGE YOOOOOO\n");
+  // There is no matching tool response to the latest tool call. We must remove it from the state
+  const removeMsg = new RemoveMessage({ id: lastAiMsgToolCall.id ?? "" });
+  return {
+    messages: [removeMsg],
+  };
+}
+
+const workflow = new StateGraph(GraphAnnotation)
+  .addNode("formatMessages", formatMessages)
+  .addNode("cua", cua)
+  .addEdge(START, "formatMessages")
+  .addEdge("formatMessages", "cua")
+  .addEdge("cua", END);
+
+export const graph = workflow.compile();

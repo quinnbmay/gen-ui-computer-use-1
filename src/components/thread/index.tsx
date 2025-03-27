@@ -150,6 +150,7 @@ export function Thread() {
           recursion_limit: 150,
           configurable: {
             timeoutHours: 0.1,
+            zdrEnabled: true,
           },
         },
         optimisticValues: (prev) => ({
@@ -409,7 +410,7 @@ export function Thread() {
           </StickToBottom>
 
           {/* Render InstanceFrame inside the flex container when conditions are met */}
-          {chatStarted && isShowingInstance && (
+          {chatStarted && customInstanceViewComponent && (
             <div className="flex-1 overflow-hidden">
               <LoadExternalComponent
                 key={customInstanceViewComponent?.id}

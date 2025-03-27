@@ -1,11 +1,19 @@
-import { useQueryState, parseAsBoolean } from "nuqs";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
-import { useStreamContext } from "@/providers/Stream";
 import { Button } from "@/components/ui/button";
 import { useInstanceActions } from "./useInstanceActions";
 import { InstanceView } from "./instance-view";
+import {
+  useStreamContext,
+  experimental_loadShare,
+} from "@langchain/langgraph-sdk/react-ui";
+
+import * as nuqs from "nuqs";
+import * as nuqsAdapters from "nuqs/adapters/next/app";
+
+experimental_loadShare("nuqs", nuqs);
+experimental_loadShare("nuqs/adapters/next/app", nuqsAdapters);
 
 interface InstanceFrameProps {
   streamUrl: string;
@@ -13,6 +21,7 @@ interface InstanceFrameProps {
 }
 
 export function InstanceFrame({ streamUrl, instanceId }: InstanceFrameProps) {
+  const { useQueryState, parseAsBoolean } = nuqs;
   const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
     "isShowingInstanceFrame",
     parseAsBoolean,

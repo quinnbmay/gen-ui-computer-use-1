@@ -6,6 +6,7 @@
   "ui": {
     "agent": "./src/agent/ui/index.tsx"
   },
+  "ui_config": { "shared": ["nuqs", "nuqs/adapters/next/app"] },
   "env": ".env",
   "dependencies": ["."]
 }
