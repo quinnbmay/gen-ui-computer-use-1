@@ -200,7 +200,6 @@ export function Thread() {
   const customInstanceViewComponent = stream.values.ui?.find(
     (ui) => ui.name === "instance",
   );
-
   const isShowingInstance = !!(
     isShowingInstanceFrame && customInstanceViewComponent
   );
@@ -421,7 +420,7 @@ export function Thread() {
           </StickToBottom>
 
           {/* Render InstanceFrame inside the flex container when conditions are met */}
-          {chatStarted && customInstanceViewComponent && (
+          {chatStarted && isShowingInstance && (
             <div className="flex-1 overflow-hidden">
               <LoadExternalComponent
                 key={customInstanceViewComponent?.id}
