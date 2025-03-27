@@ -51,7 +51,10 @@ const StreamSession = ({
 }) => {
   const [threadId, setThreadId] = useQueryState("threadId");
   const { getThreads, setThreads } = useThreads();
-  const [_isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState("isShowingInstanceFrame", parseAsBoolean);
+  const [_isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
+    "isShowingInstanceFrame",
+    parseAsBoolean,
+  );
   const streamValue = useTypedStream({
     apiUrl,
     assistantId,

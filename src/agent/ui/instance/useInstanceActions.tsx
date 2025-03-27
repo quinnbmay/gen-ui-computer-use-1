@@ -143,5 +143,5 @@ export function useInstanceActions({ instanceId }) {
     handleStop,
     handlePause,
     handleResume,
-  }
+  };
 }

@@ -76,7 +76,10 @@ export function Thread() {
   );
   const [input, setInput] = useState("");
   const [firstTokenReceived, setFirstTokenReceived] = useState(false);
-  const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState("isShowingInstanceFrame", parseAsBoolean);
+  const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
+    "isShowingInstanceFrame",
+    parseAsBoolean,
+  );
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
   const stream = useStreamContext();
@@ -186,7 +189,9 @@ export function Thread() {
     (ui) => ui.metadata?._component_type === "instance_view",
   );
 
-  const isShowingInstance = !!(isShowingInstanceFrame && customInstanceViewComponent);
+  const isShowingInstance = !!(
+    isShowingInstanceFrame && customInstanceViewComponent
+  );
 
   return (
     <div className="flex w-full h-screen overflow-hidden">

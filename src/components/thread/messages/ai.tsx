@@ -34,7 +34,9 @@ function CustomComponent({
 }) {
   const { values } = useStreamContext();
   const customComponents = values.ui?.filter(
-    (ui) => ui.metadata?.message_id === message.id && ui.metadata?._component_type !== "instance_view",
+    (ui) =>
+      ui.metadata?.message_id === message.id &&
+      ui.metadata?._component_type !== "instance_view",
   );
 
   if (!customComponents?.length) return null;

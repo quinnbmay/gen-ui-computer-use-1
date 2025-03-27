@@ -65,7 +65,6 @@ function WaitCountdown({ toolCallId }: { toolCallId: string }) {
   );
 }
 
-
 export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
   const { toolCallId, action } = props;
 

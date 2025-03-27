@@ -105,7 +105,10 @@ function WindowManagerButtons({
   allDisabled,
 }: WindowManagerButtonsProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [_isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState("isShowingInstanceFrame", parseAsBoolean);
+  const [_isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
+    "isShowingInstanceFrame",
+    parseAsBoolean,
+  );
 
   return (
     <div
@@ -219,11 +222,11 @@ interface InstanceFrameProps {
   instanceId: string;
 }
 
-export function InstanceFrame({
-  streamUrl,
-  instanceId,
-}: InstanceFrameProps) {
-  const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState("isShowingInstanceFrame", parseAsBoolean);
+export function InstanceFrame({ streamUrl, instanceId }: InstanceFrameProps) {
+  const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
+    "isShowingInstanceFrame",
+    parseAsBoolean,
+  );
   const [_threadId, setThreadId] = useQueryState("threadId");
   const [isStopping, setIsStopping] = useState(false);
   const [isStopped, setIsStopped] = useState(false);
