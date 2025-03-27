@@ -6,7 +6,6 @@ import { useInstanceActions } from "./useInstanceActions";
 import { InstanceView } from "./instance-view";
 import { useStreamContext } from "@langchain/langgraph-sdk/react-ui";
 import { useQueryState, parseAsBoolean } from "nuqs";
-import { toast } from "sonner";
 
 interface InstanceFrameProps {
   streamUrl: string;
