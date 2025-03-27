@@ -8,7 +8,7 @@ import {
   type UIMessage,
   type RemoveUIMessage,
 } from "@langchain/langgraph-sdk/react-ui";
-import { useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
 import { useThreads } from "./Thread";
 
 export type StateType = {
@@ -51,8 +51,10 @@ const StreamSession = ({
 }) => {
   const [threadId, setThreadId] = useQueryState("threadId");
   const { getThreads, setThreads } = useThreads();
-  const [streamUrl, setStreamUrl] = useQueryState("streamUrl");
-  const [instanceId, setInstanceId] = useQueryState("instanceId");
+  const [_isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
+    "isShowingInstanceFrame",
+    parseAsBoolean,
+  );
   const streamValue = useTypedStream({
     apiUrl,
     assistantId,
@@ -65,27 +67,10 @@ const StreamSession = ({
     },
     onThreadId: (id) => {
       setThreadId(id);
-      setStreamUrl(null);
-      setInstanceId(null);
+      setIsShowingInstanceFrame(null);
       // Refetch threads list when thread ID changes.
       // Wait for some seconds before fetching so we're able to get the new thread that was created.
       sleep().then(() => getThreads().then(setThreads).catch(console.error));
-    },
-    onUpdateEvent: (data) => {
-      if (
-        data.createVMInstance &&
-        data.createVMInstance.streamUrl &&
-        (!streamUrl || streamUrl !== data.createVMInstance.streamUrl)
-      ) {
-        setStreamUrl(data.createVMInstance.streamUrl);
-      }
-      if (
-        data.createVMInstance &&
-        data.createVMInstance.instanceId &&
-        (!instanceId || instanceId !== data.createVMInstance.instanceId)
-      ) {
-        setInstanceId(data.createVMInstance.instanceId);
-      }
     },
   });
 

@@ -1,3 +1,7 @@
+"use client";
+import * as nuqs from "nuqs";
+import * as nuqsAdapters from "nuqs/adapters/next/app";
+
 import { v4 as uuidv4 } from "uuid";
 import { ReactNode, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
@@ -24,9 +28,18 @@ import {
 import { useQueryState, parseAsBoolean } from "nuqs";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 import ThreadHistory from "./history";
-import { toast } from "sonner";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { InstanceFrame } from "../instance";
+import {
+  experimental_loadShare,
+  LoadExternalComponent,
+} from "@langchain/langgraph-sdk/react-ui";
+import * as Toaster from "@/components/ui/sonner";
+import * as sonner from "sonner";
+
+experimental_loadShare("nuqs", nuqs);
+experimental_loadShare("nuqs/adapters/next/app", nuqsAdapters);
+experimental_loadShare("@/components/ui/sonner", Toaster);
+experimental_loadShare("sonner", sonner);
 
 function StickyToBottomContent(props: {
   content: ReactNode;
@@ -67,6 +80,7 @@ function ScrollToBottom(props: { className?: string }) {
 }
 
 export function Thread() {
+  const { toast } = sonner;
   const [threadId, setThreadId] = useQueryState("threadId");
   const [chatHistoryOpen, setChatHistoryOpen] = useQueryState(
     "chatHistoryOpen",
@@ -74,8 +88,10 @@ export function Thread() {
   );
   const [input, setInput] = useState("");
   const [firstTokenReceived, setFirstTokenReceived] = useState(false);
-  const [streamUrl, setStreamUrl] = useQueryState("streamUrl");
-  const [_instanceId, setInstanceId] = useQueryState("instanceId");
+  const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
+    "isShowingInstanceFrame",
+    parseAsBoolean,
+  );
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
   const stream = useStreamContext();
@@ -178,9 +194,15 @@ export function Thread() {
 
   const newThread = () => {
     setThreadId(null);
-    setStreamUrl(null);
-    setInstanceId(null);
+    setIsShowingInstanceFrame(null);
   };
+
+  const customInstanceViewComponent = stream.values.ui?.find(
+    (ui) => ui.name === "instance",
+  );
+  const isShowingInstance = !!(
+    isShowingInstanceFrame && customInstanceViewComponent
+  );
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -297,13 +319,13 @@ export function Thread() {
         <div
           className={cn(
             "flex flex-1 overflow-hidden",
-            chatStarted && streamUrl ? "flex-row" : "flex-col",
+            chatStarted && isShowingInstance ? "flex-row" : "flex-col",
           )}
         >
           <StickToBottom
             className={cn(
               "relative overflow-hidden",
-              chatStarted && streamUrl ? "flex-1" : "flex-1",
+              chatStarted && isShowingInstance ? "flex-1" : "flex-1",
             )}
           >
             <StickyToBottomContent
@@ -314,7 +336,7 @@ export function Thread() {
               )}
               contentClassName={cn(
                 "pt-8 pb-16 max-w-3xl mx-auto flex flex-col gap-4 w-full",
-                chatHistoryOpen && "px-3",
+                (chatHistoryOpen || isShowingInstance) && "px-5",
               )}
               content={
                 <>
@@ -398,9 +420,14 @@ export function Thread() {
           </StickToBottom>
 
           {/* Render InstanceFrame inside the flex container when conditions are met */}
-          {chatStarted && streamUrl && (
+          {chatStarted && isShowingInstance && (
             <div className="flex-1 overflow-hidden">
-              <InstanceFrame />
+              <LoadExternalComponent
+                key={customInstanceViewComponent?.id}
+                stream={stream}
+                message={customInstanceViewComponent}
+                meta={{ ui: customInstanceViewComponent }}
+              />
             </div>
           )}
         </div>

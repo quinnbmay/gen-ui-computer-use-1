@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Agent Inbox",
-  description: "Agent Inbox UX by LangChain",
+  title: "Generative UI CUA",
+  description: "Generative UI Computer Use Agent by LangChain",
 };
 
 export default function RootLayout({
