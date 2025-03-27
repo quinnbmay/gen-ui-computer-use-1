@@ -96,7 +96,7 @@ export function InstanceFrame({ streamUrl, instanceId }: InstanceFrameProps) {
   }, [instanceId, status, stream.messages, isShowingInstanceFrame]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || isShowingInstanceFrame) return;
+    if (isShowingInstanceFrame) return;
     // Set to true on the first page load.
     setIsShowingInstanceFrame(true);
   }, []);
