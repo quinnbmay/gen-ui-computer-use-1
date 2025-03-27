@@ -7,7 +7,7 @@ import {
   isComputerCallToolMessage,
 } from "@langchain/langgraph-cua";
 import { typedUi } from "@langchain/langgraph-sdk/react-ui/server";
-import type ComponentMap from "./uis";
+import type ComponentMap from "./ui/index";
 import { Annotation, LangGraphRunnableConfig } from "@langchain/langgraph";
 import {
   uiMessageReducer,
@@ -36,21 +36,41 @@ async function beforeNode(
   const hasRenderVMButton = state.ui.some(
     (message) => message.name === "render-vm-button",
   );
+  const hasInstanceFrame = state.ui.some(
+    (message) => message.name === "instance",
+  );
 
-  // Check if there are any UI messages in state. If there are not, we can assume the UI button for rendering the VM is not visible
-  if (!hasRenderVMButton && state.instanceId && state.streamUrl) {
-    ui.push(
-      {
-        name: "render-vm-button",
-        props: {
-          instanceId: state.instanceId,
-          streamUrl: state.streamUrl,
+  if (state.instanceId && state.streamUrl) {
+    if (!hasInstanceFrame) {
+      ui.push(
+        {
+          name: "instance",
+          props: {
+            instanceId: state.instanceId,
+            streamUrl: state.streamUrl,
+          },
         },
-      },
-      {
-        message: lastMessage,
-      },
-    );
+        {
+          message: lastMessage,
+        },
+      );
+    }
+
+    // Check if there are any UI messages in state. If there are not, we can assume the UI button for rendering the VM is not visible
+    if (!hasRenderVMButton) {
+      ui.push(
+        {
+          name: "render-vm-button",
+          props: {
+            instanceId: state.instanceId,
+            streamUrl: state.streamUrl,
+          },
+        },
+        {
+          message: lastMessage,
+        },
+      );
+    }
   }
 
   if (toolCalls?.length) {

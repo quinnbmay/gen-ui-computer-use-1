@@ -186,7 +186,7 @@ export function Thread() {
   };
 
   const customInstanceViewComponent = stream.values.ui?.find(
-    (ui) => ui.metadata?._component_type === "instance_view",
+    (ui) => ui.name === "instance",
   );
 
   const isShowingInstance = !!(

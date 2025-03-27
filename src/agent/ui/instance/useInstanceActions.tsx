@@ -1,4 +1,17 @@
-export function useInstanceActions({ instanceId }) {
+import { useState } from "react";
+import { toast } from "sonner";
+
+export function useInstanceActions({ instanceId }: { instanceId: string }) {
+  const [isStopping, setIsStopping] = useState(false);
+  const [isStopped, setIsStopped] = useState(false);
+  const [status, setStatus] = useState<
+    "running" | "terminated" | "paused" | "unknown"
+  >("unknown");
+  const [screenshot, setScreenshot] = useState<string>();
+  const [isScreenshotHovered, setIsScreenshotHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const handleStop = async () => {
     if (!instanceId) {
       toast.warning("Instance not found", {
@@ -139,9 +152,26 @@ export function useInstanceActions({ instanceId }) {
     }
   };
 
+  const handleExpand = () => {
+    setIsExpanded((e) => !e);
+  };
+
   return {
     handleStop,
     handlePause,
     handleResume,
+    handleExpand,
+    isStopping,
+    setIsStopped,
+    isStopped,
+    setStatus,
+    status,
+    setScreenshot,
+    screenshot,
+    setIsScreenshotHovered,
+    isScreenshotHovered,
+    setIsLoading,
+    isLoading,
+    isExpanded,
   };
 }
