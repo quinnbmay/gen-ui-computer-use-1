@@ -69,7 +69,6 @@ export function InstanceFrame({ streamUrl, instanceId }: InstanceFrameProps) {
           body: JSON.stringify({ instanceId }),
         });
         const data = await response.json();
-        console.log("data.status", data.status);
         if (["terminated", "paused", "running"].includes(data.status)) {
           setStatus(data.status);
         }
