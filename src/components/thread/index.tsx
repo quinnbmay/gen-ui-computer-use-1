@@ -420,8 +420,8 @@ export function Thread() {
           </StickToBottom>
 
           {/* Render InstanceFrame inside the flex container when conditions are met */}
-          {chatStarted && isShowingInstance && (
-            <div className="flex-1 overflow-hidden">
+          {chatStarted && customInstanceViewComponent && (
+            <div className={cn("flex-1 overflow-hidden", !isShowingInstance && "hidden")}>
               <LoadExternalComponent
                 key={customInstanceViewComponent?.id}
                 stream={stream}
