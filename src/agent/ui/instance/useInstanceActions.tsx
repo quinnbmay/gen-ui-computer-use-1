@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useStreamContext } from "@langchain/langgraph-sdk/react-ui";
 
 export function useInstanceActions({ instanceId }: { instanceId: string }) {
+  const stream = useStreamContext();
   const [isStopping, setIsStopping] = useState(false);
   const [isStopped, setIsStopped] = useState(false);
   const [status, setStatus] = useState<
@@ -36,6 +38,18 @@ export function useInstanceActions({ instanceId }: { instanceId: string }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ instanceId }),
+      });
+      // Update the graph state to remove the instanceId and streamUrl, so that if
+      // the graph is re-invoked, it will be forced to create a new instance instead of
+      // attempting to use the terminated instance.
+      stream.submit(null, {
+        command: {
+          update: {
+            instanceId: undefined,
+            streamUrl: undefined,
+          },
+          goto: "__end__",
+        },
       });
       setIsStopped(true);
       toast.dismiss(loadingToastId);

@@ -5,13 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ComputerIcon } from "lucide-react";
 import { useQueryState, parseAsBoolean } from "nuqs";
 
-interface RenderVMButtonProps {
-  instanceId: string;
-  streamUrl: string;
-}
-
-export function RenderVMButton(props: RenderVMButtonProps) {
-  const { instanceId, streamUrl } = props;
+export function RenderVMButton() {
   const [isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
     "isShowingInstanceFrame",
     parseAsBoolean,
