@@ -35,15 +35,32 @@ async function beforeNode(
   const lastMessage = state.messages[state.messages.length - 1];
   const toolCalls = getToolOutputs(lastMessage);
 
-  const hasRenderVMButton = state.ui.some(
+  const renderVMButton = state.ui.find(
     (message) => message.name === "render-vm-button",
   );
-  const hasInstanceFrame = state.ui.some(
-    (message) => message.name === "instance",
-  );
+  const instanceFrame = state.ui.find((message) => message.name === "instance");
 
   if (state.instanceId && state.streamUrl) {
-    if (!hasInstanceFrame) {
+    if (!instanceFrame) {
+      ui.push(
+        {
+          name: "instance",
+          props: {
+            instanceId: state.instanceId,
+            streamUrl: state.streamUrl,
+          },
+        },
+        {
+          message: lastMessage,
+        },
+      );
+    } else if (
+      instanceFrame.props.instanceId !== state.instanceId ||
+      instanceFrame.props.streamUrl !== state.streamUrl
+    ) {
+      // First, remove the existing instance frame
+      ui.delete(instanceFrame.id);
+      // Then, add the new instance frame
       ui.push(
         {
           name: "instance",
@@ -59,11 +76,32 @@ async function beforeNode(
     }
 
     // Check if there are any UI messages in state. If there are not, we can assume the UI button for rendering the VM is not visible
-    if (!hasRenderVMButton) {
+    if (!renderVMButton) {
       ui.push(
         {
           name: "render-vm-button",
-          props: {
+          props: {},
+          metadata: {
+            instanceId: state.instanceId,
+            streamUrl: state.streamUrl,
+          },
+        },
+        {
+          message: lastMessage,
+        },
+      );
+    } else if (
+      renderVMButton.metadata.instanceId !== state.instanceId ||
+      renderVMButton.metadata.streamUrl !== state.streamUrl
+    ) {
+      // There is a render VM button, but it's tied to an old instance. Push a new one.
+      // This will improve the UX so the render button is "closer" in the UI to the new request
+      ui.delete(renderVMButton.id);
+      ui.push(
+        {
+          name: "render-vm-button",
+          props: {},
+          metadata: {
             instanceId: state.instanceId,
             streamUrl: state.streamUrl,
           },

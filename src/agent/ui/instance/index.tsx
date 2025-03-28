@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,8 @@ export function InstanceFrame({ streamUrl, instanceId }: InstanceFrameProps) {
     isExpanded,
   } = useInstanceActions({ instanceId });
 
+  const isUpdatingThreadStateInstanceId = useRef(false);
+
   useEffect(() => {
     if (
       typeof window === "undefined" ||
@@ -75,7 +77,27 @@ export function InstanceFrame({ streamUrl, instanceId }: InstanceFrameProps) {
 
         if (data.status === "terminated") {
           setIsStopped(true);
+          // If it's terminated, ensure the graph state does NOT have an instance ID or stream URL.
+          // Make sure we're not in the middle of updating the instance ID before sending this request.
+          if (
+            stream.values.instanceId === instanceId &&
+            !isUpdatingThreadStateInstanceId.current &&
+            !stream.isLoading
+          ) {
+            // Value in state matches the terminated instance. Remove it.
+            stream.submit(null, {
+              command: {
+                update: {
+                  instanceId: null,
+                  streamUrl: null,
+                },
+                goto: "__end__",
+              },
+            });
+            isUpdatingThreadStateInstanceId.current = true;
+          }
         }
+
         if (["paused", "terminated"].includes(data.status)) {
           findAndSetScreenshot();
         }
