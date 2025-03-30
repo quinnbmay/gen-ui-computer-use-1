@@ -76,6 +76,128 @@ function ScrollToBottom(props: { className?: string }) {
   );
 }
 
+interface ChatViewProps {
+  chatStarted: boolean;
+  isShowingInstance: boolean;
+  chatHistoryOpen: boolean;
+  firstTokenReceived: boolean;
+  handleSubmit: (e: FormEvent) => void;
+  input: string;
+  setInput: (input: string) => void;
+  handleRegenerate: (parentCheckpoint: Checkpoint | null | undefined) => void;
+}
+
+function ChatView({
+  chatStarted,
+  isShowingInstance,
+  chatHistoryOpen,
+  firstTokenReceived,
+  handleSubmit,
+  input,
+  setInput,
+  handleRegenerate,
+}: ChatViewProps) {
+  const stream = useStreamContext();
+  return (
+    <StickToBottom
+      className={cn(
+        "relative overflow-hidden",
+        chatStarted && isShowingInstance ? "flex-1" : "flex-1",
+      )}
+    >
+      <StickyToBottomContent
+        className={cn(
+          "absolute inset-0 overflow-y-scroll [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent",
+          !chatStarted && "flex flex-col items-stretch mt-[25vh]",
+          chatStarted && "grid grid-rows-[1fr_auto]",
+        )}
+        contentClassName={cn(
+          " flex flex-col md:max-w-3xl w-full pt-8 pb-16 mx-auto gap-4",
+          (chatHistoryOpen || isShowingInstance) && "px-5",
+        )}
+        content={
+          <>
+            {stream.messages
+              .filter((m) => !m.id?.startsWith(DO_NOT_RENDER_ID_PREFIX))
+              .map((message, index) =>
+                message.type === "human" ? (
+                  <HumanMessage
+                    key={message.id || `${message.type}-${index}`}
+                    message={message}
+                    isLoading={stream.isLoading}
+                  />
+                ) : (
+                  <AssistantMessage
+                    key={message.id || `${message.type}-${index}`}
+                    message={message}
+                    isLoading={stream.isLoading}
+                    handleRegenerate={handleRegenerate}
+                  />
+                ),
+              )}
+            {stream.isLoading && !firstTokenReceived && (
+              <AssistantMessageLoading />
+            )}
+          </>
+        }
+        footer={
+          <div className="sticky flex flex-col items-center gap-8 bottom-0 px-4 bg-white">
+            {!chatStarted && (
+              <div className="flex gap-3 items-center">
+                <LangGraphLogoSVG className="flex-shrink-0 h-8" />
+                <h1 className="text-2xl font-semibold tracking-tight">
+                  Generative UI Computer Use
+                </h1>
+              </div>
+            )}
+
+            <ScrollToBottom className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 animate-in fade-in-0 zoom-in-95" />
+
+            <div className="bg-muted rounded-2xl border shadow-xs mx-auto mb-8 w-full max-w-3xl relative z-10">
+              <form
+                onSubmit={handleSubmit}
+                className="grid grid-rows-[1fr_auto] gap-2 max-w-3xl mx-auto"
+              >
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey && !e.metaKey) {
+                      e.preventDefault();
+                      const el = e.target as HTMLElement | undefined;
+                      const form = el?.closest("form");
+                      form?.requestSubmit();
+                    }
+                  }}
+                  placeholder="Type your message..."
+                  className="p-3.5 pb-0 border-none bg-transparent field-sizing-content shadow-none ring-0 outline-none focus:outline-none focus:ring-0 resize-none"
+                />
+
+                <div className="flex items-center justify-end p-2 pt-4">
+                  {stream.isLoading ? (
+                    <Button key="stop" onClick={() => stream.stop()}>
+                      <LoaderCircle className="w-4 h-4 animate-spin" />
+                      Cancel
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      className="transition-all shadow-md"
+                      disabled={stream.isLoading || !input.trim()}
+                    >
+                      Send
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+        }
+      />
+    </StickToBottom>
+  );
+}
+
 export function Thread() {
   const { toast } = sonner;
   const [threadId, setThreadId] = useQueryState("threadId");
@@ -195,6 +317,7 @@ export function Thread() {
   const isShowingInstance = !!(
     isShowingInstanceFrame && customInstanceViewComponent
   );
+  console.log("isShowingInstance", chatStarted && isShowingInstance);
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -307,115 +430,69 @@ export function Thread() {
           </div>
         )}
 
+        <div className="flex items-center justify-center my-4 lg:hidden">
+          <motion.div
+            className="relative flex items-center p-1 rounded-lg bg-gray-200 shadow-inner border-[1px] border-slate-300"
+            style={{ width: "280px" }} // Fixed width to make it a bit wider
+          >
+            <motion.div
+              className="absolute inset-1 rounded-md shadow-sm z-0 bg-white h-[36px]"
+              animate={{
+                x: isShowingInstance ? "95%" : "0%",
+              }}
+              style={{ width: "50%" }} // Fixed width at 50%
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              layout
+            />
+            <Button
+              variant="ghost"
+              className={cn(
+                "relative z-10 transition-colors flex-1 justify-center",
+                !isShowingInstance ? "text-black" : "text-muted-foreground",
+              )}
+              onClick={() => setIsShowingInstanceFrame(false)}
+              style={{ width: "50%" }} // Fixed width at 50%
+            >
+              Chat
+            </Button>
+            <Button
+              variant="ghost"
+              className={cn(
+                "relative z-10 transition-colors flex-1 justify-center",
+                isShowingInstance ? "text-black" : "text-muted-foreground",
+              )}
+              onClick={() => setIsShowingInstanceFrame(true)}
+              style={{ width: "50%" }} // Fixed width at 50%
+            >
+              Computer
+            </Button>
+          </motion.div>
+        </div>
+
         {/* Create a flex row container when both chatStarted and streamUrl are truthy */}
         <div
           className={cn(
             "flex flex-1 overflow-hidden",
             chatStarted && isShowingInstance ? "flex-row" : "flex-col",
+            isShowingInstance && "lg:flex hidden",
           )}
         >
-          <StickToBottom
-            className={cn(
-              "relative overflow-hidden",
-              chatStarted && isShowingInstance ? "flex-1" : "flex-1",
-            )}
-          >
-            <StickyToBottomContent
-              className={cn(
-                "absolute inset-0 overflow-y-scroll [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent",
-                !chatStarted && "flex flex-col items-stretch mt-[25vh]",
-                chatStarted && "grid grid-rows-[1fr_auto]",
-              )}
-              contentClassName={cn(
-                "pt-8 pb-16 max-w-3xl mx-auto flex flex-col gap-4 w-full",
-                (chatHistoryOpen || isShowingInstance) && "px-5",
-              )}
-              content={
-                <>
-                  {messages
-                    .filter((m) => !m.id?.startsWith(DO_NOT_RENDER_ID_PREFIX))
-                    .map((message, index) =>
-                      message.type === "human" ? (
-                        <HumanMessage
-                          key={message.id || `${message.type}-${index}`}
-                          message={message}
-                          isLoading={isLoading}
-                        />
-                      ) : (
-                        <AssistantMessage
-                          key={message.id || `${message.type}-${index}`}
-                          message={message}
-                          isLoading={isLoading}
-                          handleRegenerate={handleRegenerate}
-                        />
-                      ),
-                    )}
-                  {isLoading && !firstTokenReceived && (
-                    <AssistantMessageLoading />
-                  )}
-                </>
-              }
-              footer={
-                <div className="sticky flex flex-col items-center gap-8 bottom-0 px-4 bg-white">
-                  {!chatStarted && (
-                    <div className="flex gap-3 items-center">
-                      <LangGraphLogoSVG className="flex-shrink-0 h-8" />
-                      <h1 className="text-2xl font-semibold tracking-tight">
-                        Generative UI Computer Use
-                      </h1>
-                    </div>
-                  )}
-
-                  <ScrollToBottom className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 animate-in fade-in-0 zoom-in-95" />
-
-                  <div className="bg-muted rounded-2xl border shadow-xs mx-auto mb-8 w-full max-w-3xl relative z-10">
-                    <form
-                      onSubmit={handleSubmit}
-                      className="grid grid-rows-[1fr_auto] gap-2 max-w-3xl mx-auto"
-                    >
-                      <textarea
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey && !e.metaKey) {
-                            e.preventDefault();
-                            const el = e.target as HTMLElement | undefined;
-                            const form = el?.closest("form");
-                            form?.requestSubmit();
-                          }
-                        }}
-                        placeholder="Type your message..."
-                        className="p-3.5 pb-0 border-none bg-transparent field-sizing-content shadow-none ring-0 outline-none focus:outline-none focus:ring-0 resize-none"
-                      />
-
-                      <div className="flex items-center justify-end p-2 pt-4">
-                        {stream.isLoading ? (
-                          <Button key="stop" onClick={() => stream.stop()}>
-                            <LoaderCircle className="w-4 h-4 animate-spin" />
-                            Cancel
-                          </Button>
-                        ) : (
-                          <Button
-                            type="submit"
-                            className="transition-all shadow-md"
-                            disabled={isLoading || !input.trim()}
-                          >
-                            Send
-                          </Button>
-                        )}
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              }
-            />
-          </StickToBottom>
+          <ChatView
+            chatStarted={chatStarted}
+            isShowingInstance={isShowingInstance}
+            chatHistoryOpen={chatHistoryOpen}
+            firstTokenReceived={firstTokenReceived}
+            handleSubmit={handleSubmit}
+            input={input}
+            setInput={setInput}
+            handleRegenerate={handleRegenerate}
+          />
 
           {/* Render InstanceFrame inside the flex container when conditions are met */}
           {chatStarted && customInstanceViewComponent && (
             <div
               className={cn(
-                "flex-1 overflow-hidden",
+                "overflow-hidden flex-1 my-auto",
                 !isShowingInstance && "hidden",
               )}
             >
@@ -428,6 +505,16 @@ export function Thread() {
             </div>
           )}
         </div>
+        {chatStarted && isShowingInstance && (
+          <div className={cn("overflow-hidden lg:hidden mx-auto my-auto")}>
+            <LoadExternalComponent
+              key={customInstanceViewComponent?.id}
+              stream={stream}
+              message={customInstanceViewComponent}
+              meta={{ ui: customInstanceViewComponent }}
+            />
+          </div>
+        )}
       </motion.div>
     </div>
   );

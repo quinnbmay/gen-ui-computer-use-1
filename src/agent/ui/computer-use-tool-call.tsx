@@ -162,10 +162,26 @@ export function ComputerUseToolCall(props: ComputerUseToolCallProps) {
   };
 
   return (
-    <div className="flex flex-col gap-2 items-start justify-start max-w-[536px] min-w-[500px] w-full border rounded-md bg-gray-50">
-      <div className="flex items-center gap-2 px-3 py-2 border-b-[1px] border-gray-200 w-full">
-        <p className="text-sm font-medium">Computer Action</p>
-        <p className="text-xs font-light text-gray-500">{toolCallId}</p>
+    <div className="flex flex-col gap-2 items-start justify-start w-full min-w-[320px] max-w-[360px] border rounded-md bg-gray-50 sm:max-w-[536px] sm:min-w-[500px]">
+      {/* Desktop and mobile header row */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center w-full gap-1 lg:gap-0 px-3 py-2 border-b-[1px] border-gray-200">
+        {/* Mobile layout: Title in first row */}
+        <div className="flex justify-between items-center w-full lg:hidden">
+          <p className="text-sm font-medium">Computer Action</p>
+        </div>
+
+        {/* Desktop layout: Title and ID on left */}
+        <div className="hidden lg:flex lg:items-center lg:gap-2 lg:flex-grow">
+          <p className="text-sm font-medium">Computer Action</p>
+          <p className="text-xs font-light text-gray-500 truncate">
+            {toolCallId}
+          </p>
+        </div>
+
+        {/* Mobile only: Tool call ID in second row */}
+        <p className="text-xs font-light text-gray-500 w-full truncate lg:hidden">
+          {toolCallId}
+        </p>
       </div>
       <div className="w-full px-3 pb-2">{renderActionContent()}</div>
     </div>
