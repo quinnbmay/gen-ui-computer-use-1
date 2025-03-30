@@ -77,25 +77,25 @@ export function InstanceFrame({ streamUrl, instanceId }: InstanceFrameProps) {
 
         if (data.status === "terminated") {
           setIsStopped(true);
-          // // If it's terminated, ensure the graph state does NOT have an instance ID or stream URL.
-          // // Make sure we're not in the middle of updating the instance ID before sending this request.
-          // if (
-          //   stream.values.instanceId === instanceId &&
-          //   !isUpdatingThreadStateInstanceId.current &&
-          //   !stream.isLoading
-          // ) {
-          //   // Value in state matches the terminated instance. Remove it.
-          //   stream.submit(null, {
-          //     command: {
-          //       update: {
-          //         instanceId: null,
-          //         streamUrl: null,
-          //       },
-          //       goto: "__end__",
-          //     },
-          //   });
-          //   isUpdatingThreadStateInstanceId.current = true;
-          // }
+          // If it's terminated, ensure the graph state does NOT have an instance ID or stream URL.
+          // Make sure we're not in the middle of updating the instance ID before sending this request.
+          if (
+            stream.values.instanceId === instanceId &&
+            !isUpdatingThreadStateInstanceId.current &&
+            !stream.isLoading
+          ) {
+            // Value in state matches the terminated instance. Remove it.
+            stream.submit(null, {
+              command: {
+                update: {
+                  instanceId: null,
+                  streamUrl: null,
+                },
+                goto: "__end__",
+              },
+            });
+            isUpdatingThreadStateInstanceId.current = true;
+          }
         }
 
         if (["paused", "terminated"].includes(data.status)) {
