@@ -95,7 +95,7 @@ function ChatView({
   handleSubmit,
   input,
   setInput,
-  handleRegenerate
+  handleRegenerate,
 }: ChatViewProps) {
   const stream = useStreamContext();
   return (
@@ -112,7 +112,7 @@ function ChatView({
           chatStarted && "grid grid-rows-[1fr_auto]",
         )}
         contentClassName={cn(
-          "pt-8 pb-16 max-w-3xl mx-auto flex flex-col gap-4 w-full",
+          " flex flex-col md:max-w-3xl w-full pt-8 pb-16 mx-auto gap-4",
           (chatHistoryOpen || isShowingInstance) && "px-5",
         )}
         content={
@@ -195,7 +195,7 @@ function ChatView({
         }
       />
     </StickToBottom>
-  )
+  );
 }
 
 export function Thread() {
@@ -317,7 +317,7 @@ export function Thread() {
   const isShowingInstance = !!(
     isShowingInstanceFrame && customInstanceViewComponent
   );
-  console.log("isShowingInstance", chatStarted && isShowingInstance)
+  console.log("isShowingInstance", chatStarted && isShowingInstance);
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -430,28 +430,28 @@ export function Thread() {
           </div>
         )}
 
-        <div className="flex items-center justify-center my-4 md:hidden">
+        <div className="flex items-center justify-center my-4 lg:hidden">
           <motion.div
             className="relative flex items-center p-1 rounded-lg bg-gray-200 shadow-inner border-[1px] border-slate-300"
-            style={{ width: '280px' }} // Fixed width to make it a bit wider
+            style={{ width: "280px" }} // Fixed width to make it a bit wider
           >
             <motion.div
               className="absolute inset-1 rounded-md shadow-sm z-0 bg-white h-[36px]"
               animate={{
-                x: isShowingInstance ? '95%' : '0%',
+                x: isShowingInstance ? "95%" : "0%",
               }}
-              style={{ width: '50%' }} // Fixed width at 50%
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              style={{ width: "50%" }} // Fixed width at 50%
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               layout
             />
             <Button
               variant="ghost"
               className={cn(
                 "relative z-10 transition-colors flex-1 justify-center",
-                !isShowingInstance ? 'text-black' : 'text-muted-foreground'
+                !isShowingInstance ? "text-black" : "text-muted-foreground",
               )}
               onClick={() => setIsShowingInstanceFrame(false)}
-              style={{ width: '50%' }} // Fixed width at 50%
+              style={{ width: "50%" }} // Fixed width at 50%
             >
               Chat
             </Button>
@@ -459,10 +459,10 @@ export function Thread() {
               variant="ghost"
               className={cn(
                 "relative z-10 transition-colors flex-1 justify-center",
-                isShowingInstance ? 'text-black' : 'text-muted-foreground'
+                isShowingInstance ? "text-black" : "text-muted-foreground",
               )}
               onClick={() => setIsShowingInstanceFrame(true)}
-              style={{ width: '50%' }} // Fixed width at 50%
+              style={{ width: "50%" }} // Fixed width at 50%
             >
               Computer
             </Button>
@@ -474,7 +474,7 @@ export function Thread() {
           className={cn(
             "flex flex-1 overflow-hidden",
             chatStarted && isShowingInstance ? "flex-row" : "flex-col",
-            isShowingInstance && "md:flex hidden"
+            isShowingInstance && "lg:flex hidden",
           )}
         >
           <ChatView
@@ -492,7 +492,7 @@ export function Thread() {
           {chatStarted && customInstanceViewComponent && (
             <div
               className={cn(
-                "overflow-hidden flex-1",
+                "overflow-hidden flex-1 my-auto",
                 !isShowingInstance && "hidden",
               )}
             >
@@ -506,11 +506,7 @@ export function Thread() {
           )}
         </div>
         {chatStarted && isShowingInstance && (
-          <div
-            className={cn(
-              "overflow-hidden md:hidden my-auto",
-            )}
-          >
+          <div className={cn("overflow-hidden lg:hidden mx-auto my-auto")}>
             <LoadExternalComponent
               key={customInstanceViewComponent?.id}
               stream={stream}

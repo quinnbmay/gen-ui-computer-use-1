@@ -19,7 +19,7 @@ export function RenderVMButton() {
     <Button
       onClick={onClick}
       variant="secondary"
-      className="w-full max-w-[536px]"
+      className="-full min-w-[320px] max-w-[360px] sm:max-w-[536px] sm:min-w-[500px]"
     >
       <ComputerIcon className="w-3 h-3" />
       <span className="mr-1">
