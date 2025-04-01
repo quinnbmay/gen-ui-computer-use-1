@@ -18,6 +18,7 @@ import {
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { useThreads } from "./Thread";
 import { getItem, setItem, USER_ID_KEY } from "@/lib/local-storage";
+import { createClient } from "./client";
 
 export type StateType = {
   messages: Message[];
@@ -58,6 +59,7 @@ const StreamSession = ({
   assistantId: string;
 }) => {
   const [threadId, setThreadId] = useQueryState("threadId");
+  const client = createClient(apiUrl);
   const { getThreads, setThreads } = useThreads();
   const [userId, setUserId] = useState<string>();
   const [_isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
@@ -79,7 +81,21 @@ const StreamSession = ({
       setIsShowingInstanceFrame(null);
       // Refetch threads list when thread ID changes.
       // Wait for some seconds before fetching so we're able to get the new thread that was created.
-      sleep().then(() => getThreads().then(setThreads).catch(console.error));
+      if (userId) {
+        client.threads
+          .update(id, {
+            metadata: {
+              user_id: userId,
+            },
+          })
+          .then(() => {
+            // After updating, re-fetch threads so the title is up to date.
+            sleep().then(() =>
+              getThreads(userId).then(setThreads).catch(console.error),
+            );
+          })
+          .catch(console.error);
+      }
     },
   });
 
