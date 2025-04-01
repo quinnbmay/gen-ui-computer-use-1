@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useThreads } from "@/providers/Thread";
 import { Thread } from "@langchain/langgraph-sdk";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { getContentString } from "../utils";
 import { useQueryState, parseAsBoolean } from "nuqs";
@@ -14,6 +14,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { PanelRightOpen, PanelRightClose } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { getItem, USER_ID_KEY } from "@/lib/local-storage";
 
 function ThreadList({
   threads,
@@ -75,17 +76,19 @@ export default function ThreadHistory() {
     "chatHistoryOpen",
     parseAsBoolean.withDefault(false),
   );
-
   const { getThreads, threads, setThreads, threadsLoading, setThreadsLoading } =
     useThreads();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    setThreadsLoading(true);
-    getThreads()
-      .then(setThreads)
-      .catch(console.error)
-      .finally(() => setThreadsLoading(false));
+    const storedUserId = getItem(USER_ID_KEY);
+    if (storedUserId) {
+      setThreadsLoading(true);
+      getThreads(storedUserId)
+        .then(setThreads)
+        .catch(console.error)
+        .finally(() => setThreadsLoading(false));
+    }
   }, []);
 
   return (

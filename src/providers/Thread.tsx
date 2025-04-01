@@ -8,11 +8,13 @@ import {
   useState,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from "react";
 import { createClient } from "./client";
+import { getItem, USER_ID_KEY } from "@/lib/local-storage";
 
 interface ThreadContextType {
-  getThreads: () => Promise<Thread[]>;
+  getThreads: (userId: string) => Promise<Thread[]>;
   threads: Thread[];
   setThreads: Dispatch<SetStateAction<Thread[]>>;
   threadsLoading: boolean;
@@ -34,21 +36,26 @@ function getThreadSearchMetadata(
 export function ThreadProvider({ children }: { children: ReactNode }) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000/api";
   const assistantId = "agent";
+
   const [threads, setThreads] = useState<Thread[]>([]);
   const [threadsLoading, setThreadsLoading] = useState(false);
 
-  const getThreads = useCallback(async (): Promise<Thread[]> => {
-    const client = createClient(apiUrl);
+  const getThreads = useCallback(
+    async (userId: string): Promise<Thread[]> => {
+      const client = createClient(apiUrl);
 
-    const threads = await client.threads.search({
-      metadata: {
-        ...getThreadSearchMetadata(assistantId),
-      },
-      limit: 100,
-    });
+      const threads = await client.threads.search({
+        metadata: {
+          ...getThreadSearchMetadata(assistantId),
+          user_id: userId,
+        },
+        limit: 100,
+      });
 
-    return threads;
-  }, [apiUrl, assistantId]);
+      return threads;
+    },
+    [apiUrl, assistantId],
+  );
 
   const value = {
     getThreads,
