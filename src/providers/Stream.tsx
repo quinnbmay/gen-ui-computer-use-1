@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode } from "react";
+import { v4 as uuidv4 } from "uuid";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
 import { useStream } from "@langchain/langgraph-sdk/react";
 import { type Message } from "@langchain/langgraph-sdk";
 import {
@@ -10,6 +17,7 @@ import {
 } from "@langchain/langgraph-sdk/react-ui";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { useThreads } from "./Thread";
+import { getItem, setItem, USER_ID_KEY } from "@/lib/local-storage";
 
 export type StateType = {
   messages: Message[];
@@ -51,6 +59,7 @@ const StreamSession = ({
 }) => {
   const [threadId, setThreadId] = useQueryState("threadId");
   const { getThreads, setThreads } = useThreads();
+  const [userId, setUserId] = useState<string>();
   const [_isShowingInstanceFrame, setIsShowingInstanceFrame] = useQueryState(
     "isShowingInstanceFrame",
     parseAsBoolean,
@@ -73,6 +82,18 @@ const StreamSession = ({
       sleep().then(() => getThreads().then(setThreads).catch(console.error));
     },
   });
+
+  useEffect(() => {
+    if (typeof window === "undefined" || userId) return;
+    const storedUserId = getItem(USER_ID_KEY);
+    if (storedUserId) {
+      setUserId(storedUserId);
+    } else {
+      const newUserId = uuidv4();
+      setUserId(newUserId);
+      setItem(USER_ID_KEY, newUserId);
+    }
+  }, []);
 
   return (
     <StreamContext.Provider value={streamValue}>

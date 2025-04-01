@@ -317,7 +317,6 @@ export function Thread() {
   const isShowingInstance = !!(
     isShowingInstanceFrame && customInstanceViewComponent
   );
-  console.log("isShowingInstance", chatStarted && isShowingInstance);
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -362,7 +361,7 @@ export function Thread() {
             : { duration: 0 }
         }
       >
-        {!chatStarted && (
+        {/* {!chatStarted && (
           <div className="absolute top-0 left-0 w-full flex items-center justify-between gap-3 p-2 pl-4 z-10">
             {(!chatHistoryOpen || !isLargeScreen) && (
               <Button
@@ -378,11 +377,11 @@ export function Thread() {
               </Button>
             )}
           </div>
-        )}
+        )} */}
         {chatStarted && (
           <div className="flex items-center justify-between gap-3 p-2 pl-4 z-10 relative">
             <div className="flex items-center justify-start gap-2 relative">
-              <div className="absolute left-0 z-10">
+              {/* <div className="absolute left-0 z-10">
                 {(!chatHistoryOpen || !isLargeScreen) && (
                   <Button
                     className="hover:bg-gray-100"
@@ -396,7 +395,7 @@ export function Thread() {
                     )}
                   </Button>
                 )}
-              </div>
+              </div> */}
               <motion.button
                 className="flex gap-2 items-center cursor-pointer"
                 onClick={() => newThread()}
