@@ -8,8 +8,6 @@ import { MarkdownText } from "../markdown-text";
 import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
 import { cn } from "@/lib/utils";
 import { Fragment } from "react/jsx-runtime";
-import { isAgentInboxInterruptSchema } from "@/lib/agent-inbox-interrupt";
-import { ThreadView } from "../agent-inbox";
 
 export function hasToolOutputs(message: AIMessage): boolean {
   const toolOutputs = message.additional_kwargs?.tool_outputs
@@ -84,9 +82,6 @@ export function AssistantMessage({
         )}
 
         <CustomComponent message={message} thread={thread} />
-        {isAgentInboxInterruptSchema(interrupt?.value) && isLastMessage && (
-          <ThreadView interrupt={interrupt.value} />
-        )}
         {!isToolCallMsg && !isToolMessage && (
           <div
             className={cn(
