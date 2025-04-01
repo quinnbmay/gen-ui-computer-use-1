@@ -79,7 +79,6 @@ function ScrollToBottom(props: { className?: string }) {
 interface ChatViewProps {
   chatStarted: boolean;
   isShowingInstance: boolean;
-  chatHistoryOpen: boolean;
   firstTokenReceived: boolean;
   handleSubmit: (e: FormEvent) => void;
   input: string;
@@ -484,7 +483,6 @@ export function Thread() {
           <ChatView
             chatStarted={chatStarted}
             isShowingInstance={isShowingInstance}
-            chatHistoryOpen={chatHistoryOpen}
             firstTokenReceived={firstTokenReceived}
             handleSubmit={handleSubmit}
             input={input}
