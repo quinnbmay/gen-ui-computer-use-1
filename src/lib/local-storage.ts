@@ -1,4 +1,4 @@
-export const USER_ID_KEY = "user_id";
+export const USER_ID_KEY = "gen_ui_cua_user_id";
 
 export function setItem(key: string, value: string) {
   if (typeof window === "undefined") {
