@@ -90,7 +90,6 @@ interface ChatViewProps {
 function ChatView({
   chatStarted,
   isShowingInstance,
-  chatHistoryOpen,
   firstTokenReceived,
   handleSubmit,
   input,
@@ -98,6 +97,7 @@ function ChatView({
   handleRegenerate,
 }: ChatViewProps) {
   const stream = useStreamContext();
+
   return (
     <StickToBottom
       className={cn(
@@ -112,8 +112,8 @@ function ChatView({
           chatStarted && "grid grid-rows-[1fr_auto]",
         )}
         contentClassName={cn(
-          " flex flex-col md:max-w-3xl w-full pt-8 pb-16 mx-auto gap-4",
-          (chatHistoryOpen || isShowingInstance) && "px-5",
+          "flex flex-col md:max-w-3xl w-full pt-8 pb-16 mx-auto gap-4",
+          chatStarted && "px-5",
         )}
         content={
           <>
@@ -429,7 +429,12 @@ export function Thread() {
           </div>
         )}
 
-        <div className="flex items-center justify-center my-4 lg:hidden">
+        <div
+          className={cn(
+            "flex items-center justify-center my-4 lg:hidden",
+            !chatStarted && "hidden",
+          )}
+        >
           <motion.div
             className="relative flex items-center p-1 rounded-lg bg-gray-200 shadow-inner border-[1px] border-slate-300"
             style={{ width: "280px" }} // Fixed width to make it a bit wider
