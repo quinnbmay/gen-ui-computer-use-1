@@ -23,7 +23,7 @@
     "@langchain/langgraph": "^0.2.60",
     "@langchain/langgraph-api": "^0.0.19",
     "@langchain/langgraph-cli": "^0.0.19",
-    "@langchain/langgraph-cua": "file:/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua",
+    "@langchain/langgraph-cua": "^0.0.5",
     "@langchain/langgraph-sdk": "^0.0.61",
     "@langchain/openai": "^0.5.1",
     "@radix-ui/react-alert-dialog": "^1.1.6",

@@ -21,8 +21,8 @@ importers:
         specifier: ^0.0.19
         version: 0.0.19(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(@langchain/langgraph-checkpoint@0.0.16(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2))))(@langchain/langgraph@0.2.60(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(react@19.0.0)(zod-to-json-schema@3.24.5(zod@3.24.2)))(openai@4.90.0(ws@8.18.1)(zod@3.24.2))(typescript@5.7.3)
       '@langchain/langgraph-cua':
-        specifier: file:/Users/bracesproul/code/lang-chain-ai/langgraphjs/libs/langgraph-cua
-        version: file:../../langgraphjs/libs/langgraph-cua(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(@langchain/langgraph@0.2.60(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(react@19.0.0)(zod-to-json-schema@3.24.5(zod@3.24.2)))(@langchain/openai@0.5.1(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(ws@8.18.1))
+        specifier: ^0.0.5
+        version: 0.0.5(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(@langchain/langgraph@0.2.60(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(react@19.0.0)(zod-to-json-schema@3.24.5(zod@3.24.2)))(@langchain/openai@0.5.1(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(ws@8.18.1))
       '@langchain/langgraph-sdk':
         specifier: ^0.0.61
         version: 0.0.61(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(react@19.0.0)
@@ -622,8 +622,8 @@ packages:
     engines: {node: ^18.19.0 || >=20.16.0}
     hasBin: true
 
-  '@langchain/langgraph-cua@file:../../langgraphjs/libs/langgraph-cua':
-    resolution: {directory: ../../langgraphjs/libs/langgraph-cua, type: directory}
+  '@langchain/langgraph-cua@0.0.5':
+    resolution: {integrity: sha512-GVtYSyrY2fdbMvwUhLXM2fi0SfTqQCa07V9cvi0MABZ3XeQ+dhJBLY6AWepz5vj9QhJUKJ5qJqXXYd5144QAOg==}
     engines: {node: '>=18'}
     peerDependencies:
       '@langchain/core': ^0.3.43
@@ -4341,7 +4341,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@langchain/langgraph-cua@file:../../langgraphjs/libs/langgraph-cua(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(@langchain/langgraph@0.2.60(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(react@19.0.0)(zod-to-json-schema@3.24.5(zod@3.24.2)))(@langchain/openai@0.5.1(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(ws@8.18.1))':
+  '@langchain/langgraph-cua@0.0.5(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(@langchain/langgraph@0.2.60(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(react@19.0.0)(zod-to-json-schema@3.24.5(zod@3.24.2)))(@langchain/openai@0.5.1(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(ws@8.18.1))':
     dependencies:
       '@langchain/core': 0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2))
       '@langchain/langgraph': 0.2.60(@langchain/core@0.3.43(openai@4.90.0(ws@8.18.1)(zod@3.24.2)))(react@19.0.0)(zod-to-json-schema@3.24.5(zod@3.24.2))
