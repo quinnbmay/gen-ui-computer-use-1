@@ -16,6 +16,8 @@ import {
   type UIMessage,
   type RemoveUIMessage,
 } from "@langchain/langgraph-sdk/react-ui";
+import { createClient } from "@supabase/supabase-js";
+import { v4 as uuidv4 } from "uuid";
 
 const GraphAnnotation = Annotation.Root({
   ...CUAAnnotation.spec,
@@ -26,6 +28,75 @@ const GraphAnnotation = Annotation.Root({
 });
 
 type GraphState = typeof GraphAnnotation.State & CUAState;
+
+function convertBase64ToBlob(screenshot: string): Blob | null {
+  let base64Data = screenshot;
+  if (screenshot.startsWith("data:image/png;base64,")) {
+    base64Data = screenshot.slice("data:image/png;base64,".length);
+  }
+
+  try {
+    // Decode the base64 string
+    const byteCharacters = atob(base64Data);
+    // Create an array of byte values
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    // Convert to a typed array
+    const byteArray = new Uint8Array(byteNumbers);
+    // Create and return the Blob
+    return new Blob([byteArray], { type: "image/png" });
+  } catch (error) {
+    console.error("Failed to convert base64 to Blob:", error);
+    // Return null or handle the error as appropriate
+    return null;
+  }
+}
+
+async function uploadScreenshot(screenshot: string): Promise<string> {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseApiKey = process.env.SUPABASE_API_KEY;
+  if (!supabaseUrl || !supabaseApiKey) {
+    throw new Error("Missing Supabase credentials");
+  }
+
+  const bucketName = "cua-screenshots";
+
+  const client = createClient(supabaseUrl, supabaseApiKey);
+
+  const fileName = `${uuidv4()}.png`;
+
+  const blob = convertBase64ToBlob(screenshot);
+  if (!blob) {
+    console.error("Failed to convert screenshot to blob. Aborting upload.");
+    throw new Error("Failed to process screenshot for upload.");
+  }
+
+  const { error: uploadError } = await client.storage
+    .from(bucketName)
+    .upload(fileName, blob, {
+      contentType: "image/png",
+      duplex: "half",
+      upsert: false,
+    });
+
+  if (uploadError) {
+    throw new Error(`Failed to upload screenshot: ${uploadError.message}`);
+  }
+
+  const expiresIn = 60 * 60 * 24 * 90; // 90 days
+
+  const { data, error: signedUrlError } = await client.storage
+    .from(bucketName)
+    .createSignedUrl(fileName, expiresIn);
+
+  if (signedUrlError) {
+    throw new Error(`Failed to create signed URL: ${signedUrlError.message}`);
+  }
+
+  return data.signedUrl;
+}
 
 async function beforeNode(
   state: GraphState,
@@ -163,4 +234,5 @@ export const graph = createCua({
   stateModifier: GraphAnnotation,
   recursionLimit: 150,
   timeoutHours: 0.1,
+  uploadScreenshot,
 });
