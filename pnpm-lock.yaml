@@ -122,9 +122,6 @@ importers:
       remark-math:
         specifier: ^6.0.0
         version: 6.0.0
-      scrapybara:
-        specifier: ^2.4.4
-        version: 2.4.4
       sonner:
         specifier: ^2.0.1
         version: 2.0.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
