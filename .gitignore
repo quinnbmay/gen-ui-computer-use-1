@@ -29,4 +29,4 @@ dist-ssr
 .yarn/
 !.yarn/install-state.gz
 .next/
-next-env.d.ts
+next-env.d.ts.env.production
