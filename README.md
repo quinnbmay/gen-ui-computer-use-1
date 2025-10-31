@@ -9,7 +9,7 @@ A Generative UI web app for interacting with Computer Use Agents (CUA) via the `
 The following API keys are required to run this app:
 
 - [OpenAI API Key](https://platform.openai.com/) - Calling the computer use model
-- [Scrapybara API Key](https://scrapybara.com/) - Running the VM
+- [Airtop API Key](https://airtop.ai/) - Running the VM
 
 Once you have both API keys, you can clone the repo:
 
@@ -29,11 +29,11 @@ Copy the `.env.example` file to `.env` and add your API keys:
 cp .env.example .env
 ```
 
-Add your OpenAI API key and Scrapybara API key to the `.env` file:
+Add your OpenAI API key and Airtop API key to the `.env` file:
 
 ```bash
 OPENAI_API_KEY=your_openai_api_key
-SCrapybara_API_KEY=your_scrapybara_api_key
+AIRTOP_API_KEY=your_airtop_api_key
 ```
 
 Install dependencies:

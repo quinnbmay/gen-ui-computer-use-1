@@ -18,6 +18,11 @@ import {
 } from "@langchain/langgraph-sdk/react-ui";
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
+import { createLibreChatClient } from "@/lib/librechat";
+import { applyAirtopAdapter } from "@/lib/cua-airtop-adapter";
+
+// Apply Airtop adapter to replace Scrapybara in LangGraph CUA
+applyAirtopAdapter();
 
 const GraphAnnotation = Annotation.Root({
   ...CUAAnnotation.spec,
@@ -25,9 +30,23 @@ const GraphAnnotation = Annotation.Root({
     UIMessage[],
     UIMessage | RemoveUIMessage | (UIMessage | RemoveUIMessage)[]
   >({ default: () => [], reducer: uiMessageReducer }),
+  libreChatConversationId: Annotation<string | null>({
+    default: () => null,
+    reducer: (state, value) => value ?? state,
+  }),
 });
 
 type GraphState = typeof GraphAnnotation.State & CUAState;
+
+// Initialize LibreChat client
+let libreChatClient: ReturnType<typeof createLibreChatClient> | null = null;
+
+function getLibreChatClient() {
+  if (!libreChatClient && process.env.LIBRECHAT_TOKEN) {
+    libreChatClient = createLibreChatClient();
+  }
+  return libreChatClient;
+}
 
 function convertBase64ToBlob(screenshot: string): Blob | null {
   let base64Data = screenshot;
@@ -98,12 +117,77 @@ async function uploadScreenshot(screenshot: string): Promise<string> {
   return data.signedUrl;
 }
 
+/**
+ * Log message to LibreChat if configured
+ */
+async function logMessageToLibreChat(
+  state: GraphState,
+  message: string,
+  sender: 'user' | 'assistant'
+): Promise<string | null> {
+  const client = getLibreChatClient();
+  if (!client) return null;
+
+  try {
+    // Create conversation if it doesn't exist
+    if (!state.libreChatConversationId) {
+      const conversation = await client.createConversation({
+        title: 'Computer Use Agent Session',
+        endpoint: 'computer-use',
+        model: 'gpt-4',
+      });
+      return conversation.conversationId;
+    }
+
+    // Send message to existing conversation
+    await client.sendMessage({
+      conversationId: state.libreChatConversationId,
+      text: message,
+    });
+
+    return state.libreChatConversationId;
+  } catch (error) {
+    console.error('Failed to log message to LibreChat:', error);
+    return state.libreChatConversationId;
+  }
+}
+
+/**
+ * Store important context in LibreChat memory
+ */
+async function storeMemory(content: string): Promise<void> {
+  const client = getLibreChatClient();
+  if (!client) return;
+
+  try {
+    await client.createMemory({
+      content,
+      metadata: {
+        source: 'computer-use-agent',
+        timestamp: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error('Failed to store memory:', error);
+  }
+}
+
 async function beforeNode(
   state: GraphState,
   config: LangGraphRunnableConfig,
 ): Promise<CUAUpdate> {
   const ui = typedUi<typeof ComponentMap>(config);
   const lastMessage = state.messages[state.messages.length - 1];
+
+  // Log user message to LibreChat
+  if (lastMessage && 'content' in lastMessage && typeof lastMessage.content === 'string') {
+    const conversationId = await logMessageToLibreChat(state, lastMessage.content, 'user');
+    if (conversationId && !state.libreChatConversationId) {
+      return {
+        libreChatConversationId: conversationId,
+      };
+    }
+  }
   const toolCalls = getToolOutputs(lastMessage);
 
   const renderVMButton = state.ui.find(
@@ -210,6 +294,18 @@ async function afterNode(
 ): Promise<CUAUpdate> {
   const ui = typedUi<typeof ComponentMap>(config);
   const lastMessage = state.messages[state.messages.length - 1];
+
+  // Log assistant response to LibreChat
+  if (lastMessage && 'content' in lastMessage && typeof lastMessage.content === 'string') {
+    await logMessageToLibreChat(state, lastMessage.content, 'assistant');
+
+    // Store important computer use actions as memories
+    if (isComputerCallToolMessage(lastMessage)) {
+      const toolCall = 'tool_call_id' in lastMessage ? lastMessage.tool_call_id : 'unknown';
+      await storeMemory(`Computer action performed: ${toolCall}`);
+    }
+  }
+
   if (isComputerCallToolMessage(lastMessage)) {
     ui.push(
       {

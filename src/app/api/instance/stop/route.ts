@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ScrapybaraClient } from "scrapybara";
+import { AirtopClient } from "@airtop/sdk";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,27 +13,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.SCRAPYBARA_API_KEY) {
+    if (!process.env.AIRTOP_API_KEY) {
       return NextResponse.json(
         {
-          error: "Scrapybara API key is missing",
+          error: "Airtop API key is missing",
         },
         { status: 400 },
       );
     }
-    const client = new ScrapybaraClient({
-      apiKey: process.env.SCRAPYBARA_API_KEY,
+
+    const client = new AirtopClient({
+      apiKey: process.env.AIRTOP_API_KEY,
     });
 
-    const instance = await client.get(instanceId);
-    await instance.stop();
+    await client.sessions.terminate(instanceId);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
-    console.error("Failed to process stop instance request:", error);
+    console.error("Failed to terminate session:", error);
 
     return NextResponse.json(
-      { error: "Failed to stop instance." + error.message },
+      { error: "Failed to terminate session: " + error.message },
       { status: 500 },
     );
   }

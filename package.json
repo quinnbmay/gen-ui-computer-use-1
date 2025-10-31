@@ -19,6 +19,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@airtop/sdk": "^0.1.45",
     "@langchain/core": "^0.3.43",
     "@langchain/langgraph": "^0.2.60",
     "@langchain/langgraph-api": "^0.0.19",
@@ -56,7 +57,6 @@
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
-    "scrapybara": "^2.4.4",
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",

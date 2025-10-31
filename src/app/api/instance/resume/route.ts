@@ -1,40 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ScrapybaraClient } from "scrapybara";
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { instanceId } = body as { instanceId: string };
-
-    if (!instanceId) {
-      return NextResponse.json(
-        { error: "`instanceId` is required." },
-        { status: 400 },
-      );
-    }
-
-    if (!process.env.SCRAPYBARA_API_KEY) {
-      return NextResponse.json(
-        {
-          error: "Scrapybara API key is missing",
-        },
-        { status: 400 },
-      );
-    }
-    const client = new ScrapybaraClient({
-      apiKey: process.env.SCRAPYBARA_API_KEY,
-    });
-
-    const instance = await client.get(instanceId);
-    await instance.resume();
-
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error: any) {
-    console.error("Failed to process resume instance request:", error);
-
-    return NextResponse.json(
-      { error: "Failed to resume instance." + error.message },
-      { status: 500 },
-    );
-  }
+  // Airtop does not support resuming sessions
+  // Sessions can only be in states: awaitingCapacity, initializing, running, ended, completed, or cancelled
+  return NextResponse.json(
+    {
+      error: "Resume operation is not supported by Airtop. Sessions cannot be resumed - they must be either running or terminated."
+    },
+    { status: 501 }, // 501 Not Implemented
+  );
 }
