@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { assistantId: string } }
+  { params }: { params: Promise<{ assistantId: string }> }
 ) {
   try {
-    const { assistantId } = params;
+    const { assistantId } = await params;
     const body = await request.json();
 
     // Get the backend URL from environment variables
