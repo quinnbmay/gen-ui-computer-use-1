@@ -121,7 +121,7 @@ const StreamSession = ({
 export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000/api";
+  const apiUrl = process.env.NEXT_PUBLIC_LANGGRAPH_URL ?? "http://localhost:2024";
   const assistantId = "agent";
 
   return (
